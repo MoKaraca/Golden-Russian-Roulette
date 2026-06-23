@@ -30,8 +30,13 @@ namespace MiniGameDemo.Wheel
         [Tooltip("Prefab containing WheelSliceVisual (icon Image + amount TMP).")]
         [SerializeField] private GameObject _sliceVisualPrefab;
 
-        [Tooltip("Distance from the wheel centre at which each slice icon is placed (pixels).")]
+        [Tooltip("Distance from the wheel centre at which each slice icon is placed (pixels).\nIncrease to push icons outward, decrease to pull them inward.")]
         [SerializeField] private float _sliceIconRadius = 160f;
+
+        [Tooltip("Width and height of each slice icon square (pixels).\n" +
+                 "Make this smaller if icons look too large, larger if they look too small.\n" +
+                 "Rule of thumb: keep it at ~50% of the wheel's diameter.")]
+        [SerializeField] private float _sliceIconSize = 80f;
 
         [Header("Spin Settings")]
         [Tooltip("Total duration of one spin animation in seconds.")]
@@ -39,6 +44,30 @@ namespace MiniGameDemo.Wheel
 
         [Tooltip("Minimum number of full 360° rotations before the wheel settles.")]
         [SerializeField] private int _minFullSpins = 5;
+
+        [Header("Wheel Tier Visuals")]
+        [Tooltip("The Image component on ui_image_wheel_base_value. Sprite is swapped per zone tier.")]
+        [SerializeField] private UnityEngine.UI.Image _img_wheel_base;
+
+        [Tooltip("The static indicator/needle Image (NOT a child of ui_animator_wheel so it doesn't rotate).\n" +
+                 "Assign the 'indicator' object from the scene hierarchy.")]
+        [SerializeField] private UnityEngine.UI.Image _img_indicator;
+
+        [Header("Wheel Base Sprites")]
+        [Tooltip("Bronze wheel base (Standard zones). Assign ui_spin_bronze_base sprite.")]
+        [SerializeField] private Sprite _sprite_wheel_standard;
+        [Tooltip("Silver wheel base (Safe zones, every 5th). Assign ui_spin_silver_base sprite.")]
+        [SerializeField] private Sprite _sprite_wheel_safe;
+        [Tooltip("Golden wheel base (Super zones, every 30th). Assign ui_spin_golden_base sprite.")]
+        [SerializeField] private Sprite _sprite_wheel_super;
+
+        [Header("Indicator / Needle Sprites")]
+        [Tooltip("Bronze indicator arrow. Assign ui_spin_bronze_indicator sprite.")]
+        [SerializeField] private Sprite _sprite_indicator_standard;
+        [Tooltip("Silver indicator arrow. Assign ui_spin_silver_indicator sprite.")]
+        [SerializeField] private Sprite _sprite_indicator_safe;
+        [Tooltip("Gold indicator arrow. Assign ui_spin_golden_indicator sprite.")]
+        [SerializeField] private Sprite _sprite_indicator_super;
 
         // ------------------------------------------------------------------ State
 
@@ -99,7 +128,37 @@ namespace MiniGameDemo.Wheel
             }
 
             RebuildSliceVisuals();
+            UpdateWheelVisuals(tier);
             OnWheelGenerated?.Invoke(_currentSlices);
+        }
+
+        /// <summary>
+        /// Swaps the wheel base sprite and indicator sprite to match the current zone tier.
+        /// Standard = bronze | Safe = silver | Super = gold.
+        /// </summary>
+        private void UpdateWheelVisuals(ZoneTier tier)
+        {
+            // ── Wheel base ─────────────────────────────────────────────────
+            Sprite baseSprite = tier == ZoneTier.Super ? _sprite_wheel_super  :
+                                tier == ZoneTier.Safe  ? _sprite_wheel_safe   :
+                                                         _sprite_wheel_standard;
+
+            if (_img_wheel_base != null && baseSprite != null)
+                _img_wheel_base.sprite = baseSprite;
+            else if (_img_wheel_base != null && baseSprite == null)
+                Debug.LogWarning($"[WheelController] No base sprite assigned for tier {tier}. " +
+                                 "Assign sprites in the Wheel Tier Visuals section of the Inspector.");
+
+            // ── Indicator / needle ─────────────────────────────────────────
+            Sprite indicatorSprite = tier == ZoneTier.Super ? _sprite_indicator_super  :
+                                     tier == ZoneTier.Safe  ? _sprite_indicator_safe   :
+                                                              _sprite_indicator_standard;
+
+            if (_img_indicator != null && indicatorSprite != null)
+                _img_indicator.sprite = indicatorSprite;
+            else if (_img_indicator != null && indicatorSprite == null)
+                Debug.LogWarning($"[WheelController] No indicator sprite assigned for tier {tier}. " +
+                                 "Assign sprites in the Indicator section of the Inspector.");
         }
 
         /// <summary>
@@ -146,8 +205,8 @@ namespace MiniGameDemo.Wheel
                 var obj = Instantiate(_sliceVisualPrefab, _rt_slices_root);
                 var rt  = obj.GetComponent<RectTransform>();
 
-                // Fixed size for each slice icon cell
-                rt.sizeDelta = new Vector2(_sliceIconRadius * 0.9f, _sliceIconRadius * 0.9f);
+                // Fixed size — controlled by _sliceIconSize in Inspector
+                rt.sizeDelta = new Vector2(_sliceIconSize, _sliceIconSize);
 
                 // Place icon at the slice's midpoint radius from centre
                 rt.anchoredPosition = new Vector2(

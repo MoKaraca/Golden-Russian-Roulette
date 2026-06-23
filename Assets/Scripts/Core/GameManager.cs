@@ -89,7 +89,9 @@ namespace MiniGameDemo.Core
 
         /// <summary>
         /// Called by WheelController after the spin animation ends.
-        /// Bomb → clears rewards and triggers GameOver.
+        /// Bomb → triggers GameOver but does NOT clear rewards yet.
+        ///   - If the player revives, they keep their collected rewards.
+        ///   - If the player gives up, GiveUp() clears the rewards.
         /// Reward → adds to collection and advances to the next zone.
         /// </summary>
         public void ProcessSpinResult(RewardItemData result, int amount)
@@ -98,7 +100,8 @@ namespace MiniGameDemo.Core
 
             if (result.rewardType == RewardType.Bomb)
             {
-                ClearRewards();
+                // Do NOT clear rewards here — player may revive and keep them.
+                // Rewards are cleared in GiveUp() if the player chooses not to revive.
                 SetState(GameState.GameOver);
                 return;
             }

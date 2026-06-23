@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bombReward: {fileID: 11400000, guid: ba8293904a3e28b4ea2b9967502bf54a, type: 2}
   standardZoneRules:
-    tier: 0
     sliceCount: 8
-    bombChance: 0.15
     possibleRewards:
     - {fileID: 11400000, guid: 5b2b576e97869fe44b5ecabde00867e1, type: 2}
     - {fileID: 11400000, guid: 7b4f7287b3f12844cbc5f604fa3bd2dd, type: 2}
@@ -54,14 +52,26 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 5153d1dadeeb244448a96b10c43dafc2, type: 2}
     - {fileID: 11400000, guid: 2c09d35616e214e46be41765e2cbeca5, type: 2}
   safeZoneRules:
-    tier: 0
     sliceCount: 8
-    bombChance: 0.15
-    possibleRewards: []
+    possibleRewards:
+    - {fileID: 11400000, guid: c16674f795ebde843b6beba4d54dc2a3, type: 2}
+    - {fileID: 11400000, guid: 865a9022972a2194ca0168926089baf0, type: 2}
+    - {fileID: 11400000, guid: 57c771c3f125135439cc235c05bb3329, type: 2}
+    - {fileID: 11400000, guid: f18e42a59542dd84ea6d7c5e4cea9016, type: 2}
+    - {fileID: 11400000, guid: 5b2b576e97869fe44b5ecabde00867e1, type: 2}
+    - {fileID: 11400000, guid: a059d7b4ca370004c86196f8b57ec36f, type: 2}
+    - {fileID: 11400000, guid: 820389d51257a4748ad086b1c59aed8f, type: 2}
+    - {fileID: 11400000, guid: 5e6947e47fea25d43ac4ac37dcc666fb, type: 2}
   superZoneRules:
-    tier: 0
     sliceCount: 8
-    bombChance: 0.15
-    possibleRewards: []
+    possibleRewards:
+    - {fileID: 11400000, guid: 57c771c3f125135439cc235c05bb3329, type: 2}
+    - {fileID: 11400000, guid: f18e42a59542dd84ea6d7c5e4cea9016, type: 2}
+    - {fileID: 11400000, guid: 90d572e9322522641be38bf3e0858d7d, type: 2}
+    - {fileID: 11400000, guid: dc9b6995109e6d949b5bcb39e628f215, type: 2}
+    - {fileID: 11400000, guid: f454b331ef3e859448b70438044f1247, type: 2}
+    - {fileID: 11400000, guid: c09872e42fc1c054b82e63b2438e5798, type: 2}
+    - {fileID: 11400000, guid: 7d63595bd6f40f544bd09d65f301abe8, type: 2}
+    - {fileID: 11400000, guid: 1a7fe874fa41d6b40a4b0f8f70a6f4f2, type: 2}
   safeZoneInterval: 5
   superZoneInterval: 30

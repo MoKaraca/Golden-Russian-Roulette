@@ -98,8 +98,11 @@ namespace MiniGameDemo.UI
             FindChildButton(ref _btn_revive, "btn_revive");
             FindChildButton(ref _btn_givup,  "btn_GiveUp");
 
-            FindChildTMP(ref _txt_zone_value,       "txt_zone_value");
-            FindChildTMP(ref _txt_revive_cost_value, "revive_cost");
+            FindChildTMP(ref _txt_zone_value,        "txt_zone_value");
+            // NOTE: looks for 'txt_revive_cost_value' (with _value suffix per spec).
+            // The existing static 'revive_cost' label in the scene will NOT be touched.
+            // To show the cost dynamically, add a TMP text named 'txt_revive_cost_value' inside ui_panel_gameover.
+            FindChildTMP(ref _txt_revive_cost_value, "txt_revive_cost_value");
 
             FindChildGameObject(ref _panel_gameplay,  "ui_panel_gameplay");
             FindChildGameObject(ref _panel_gameover,  "ui_panel_gameover");
