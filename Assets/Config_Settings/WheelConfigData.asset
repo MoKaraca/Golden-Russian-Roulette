@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddadb61ae33022046a1ad4c50dc35bad, type: 3}
+  m_Name: WheelConfigData
+  m_EditorClassIdentifier: 
+  bombReward: {fileID: 11400000, guid: ba8293904a3e28b4ea2b9967502bf54a, type: 2}
+  standardZoneRules:
+    tier: 0
+    sliceCount: 8
+    bombChance: 0.15
+    possibleRewards:
+    - {fileID: 11400000, guid: 5b2b576e97869fe44b5ecabde00867e1, type: 2}
+    - {fileID: 11400000, guid: 7b4f7287b3f12844cbc5f604fa3bd2dd, type: 2}
+    - {fileID: 11400000, guid: 1a7fe874fa41d6b40a4b0f8f70a6f4f2, type: 2}
+    - {fileID: 11400000, guid: ecbe11319693a0e4c9adfd746c9d110d, type: 2}
+    - {fileID: 11400000, guid: e259b073557f3d14b94225ac86c5a0b6, type: 2}
+    - {fileID: 11400000, guid: 200997da8525ef1479886171944aab31, type: 2}
+    - {fileID: 11400000, guid: db76cb8361133e845a716bb9b7a22745, type: 2}
+    - {fileID: 11400000, guid: 8351b00f78cc0cc42a282ff0ded12e4e, type: 2}
+    - {fileID: 11400000, guid: 8627ce5a43a309d48b76ee3c1cebcf88, type: 2}
+    - {fileID: 11400000, guid: a059d7b4ca370004c86196f8b57ec36f, type: 2}
+    - {fileID: 11400000, guid: c16674f795ebde843b6beba4d54dc2a3, type: 2}
+    - {fileID: 11400000, guid: 865a9022972a2194ca0168926089baf0, type: 2}
+    - {fileID: 11400000, guid: fd4a04232d40ba04e9f46b37b6c39e0e, type: 2}
+    - {fileID: 11400000, guid: 820389d51257a4748ad086b1c59aed8f, type: 2}
+    - {fileID: 11400000, guid: 5e6947e47fea25d43ac4ac37dcc666fb, type: 2}
+    - {fileID: 11400000, guid: f18e42a59542dd84ea6d7c5e4cea9016, type: 2}
+    - {fileID: 11400000, guid: 57c771c3f125135439cc235c05bb3329, type: 2}
+    - {fileID: 11400000, guid: 0da9c01b6d264914382a68fc978d794a, type: 2}
+    - {fileID: 11400000, guid: 7d63595bd6f40f544bd09d65f301abe8, type: 2}
+    - {fileID: 11400000, guid: bfa8d05bda5500240b3c5a670abd4c5b, type: 2}
+    - {fileID: 11400000, guid: dc9b6995109e6d949b5bcb39e628f215, type: 2}
+    - {fileID: 11400000, guid: c09872e42fc1c054b82e63b2438e5798, type: 2}
+    - {fileID: 11400000, guid: f454b331ef3e859448b70438044f1247, type: 2}
+    - {fileID: 11400000, guid: 90d572e9322522641be38bf3e0858d7d, type: 2}
+    - {fileID: 11400000, guid: f22e33de2cb423f499097d1f71ac5681, type: 2}
+    - {fileID: 11400000, guid: a77e529c809247e4da431e8585af69a6, type: 2}
+    - {fileID: 11400000, guid: ba8293904a3e28b4ea2b9967502bf54a, type: 2}
+    - {fileID: 11400000, guid: bb93dc15f4007e54f90a183932b379e5, type: 2}
+    - {fileID: 11400000, guid: 6da98b2256d43d34e8c10d518ae5df98, type: 2}
+    - {fileID: 11400000, guid: 2cb23c8254acc4b49a73aa46e5339b6c, type: 2}
+    - {fileID: 11400000, guid: 677e932de8d76fd4eb9e022e357064be, type: 2}
+    - {fileID: 11400000, guid: 2fd854e6dd08f194381b43531cd48289, type: 2}
+    - {fileID: 11400000, guid: 271ccedd9b5fc954695752b02b4157b9, type: 2}
+    - {fileID: 11400000, guid: 5153d1dadeeb244448a96b10c43dafc2, type: 2}
+    - {fileID: 11400000, guid: 2c09d35616e214e46be41765e2cbeca5, type: 2}
+  safeZoneRules:
+    tier: 0
+    sliceCount: 8
+    bombChance: 0.15
+    possibleRewards: []
+  superZoneRules:
+    tier: 0
+    sliceCount: 8
+    bombChance: 0.15
+    possibleRewards: []
+  safeZoneInterval: 5
+  superZoneInterval: 30
