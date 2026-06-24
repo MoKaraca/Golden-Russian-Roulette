@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 namespace MiniGameDemo.UI
 {
@@ -38,7 +39,9 @@ namespace MiniGameDemo.UI
             }
 
             // Scale up the current zone badge slightly for emphasis
-            transform.localScale = isCurrent ? Vector3.one * 1.15f : Vector3.one;
+            transform.localScale = Vector3.zero;
+            float targetScale = isCurrent ? 1.2f : 1f;
+            transform.DOScale(targetScale, 0.4f).SetEase(DG.Tweening.Ease.OutBack);
         }
     }
 }

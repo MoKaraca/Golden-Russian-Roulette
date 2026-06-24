@@ -316,8 +316,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 108.07059, y: -345.86963}
-  m_SizeDelta: {x: 253.4688, y: 706.2609}
+  m_AnchoredPosition: {x: 111.4, y: -345}
+  m_SizeDelta: {x: 246.8, y: 690}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &79648243
 MonoBehaviour:
@@ -600,7 +600,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1034091142}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -877,7 +877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.75686276, b: 0.02745098, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1415,12 +1415,12 @@ RectTransform:
   - {fileID: 672245329}
   - {fileID: 1488044767}
   m_Father: {fileID: 1034091142}
-  m_RootOrder: 6
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -6, y: 0}
+  m_SizeDelta: {x: 12, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &676482835
 MonoBehaviour:
@@ -2168,10 +2168,10 @@ RectTransform:
   - {fileID: 401498685}
   - {fileID: 79648242}
   - {fileID: 1350307723}
-  - {fileID: 676482834}
   - {fileID: 1254422918}
   - {fileID: 1307922358}
   - {fileID: 286527743}
+  - {fileID: 676482834}
   m_Father: {fileID: 1568204367}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2462,7 +2462,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1034091142}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2482,8 +2482,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inventoryItemPrefab: {fileID: 8843713610444776058, guid: ee130bd077943744eb9b1315f93b02db, type: 3}
-  _itemSize: 48
-  _itemSpacing: 6
+  _itemSize: 52
+  _itemSpacing: 7
 --- !u!114 &1254422920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2714,11 +2714,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1034091142}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.0000019073486, y: -41.40595}
+  m_AnchoredPosition: {x: 0, y: -41.405945}
   m_SizeDelta: {x: 461.327, y: 82.8119}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1307922359
@@ -2796,7 +2796,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 172, y: -77}
+  m_AnchoredPosition: {x: 172, y: -88}
   m_SizeDelta: {x: 100.42627, y: 19.127686}
   m_Pivot: {x: 0.8555801, y: -0.86359096}
 --- !u!114 &1350307724
