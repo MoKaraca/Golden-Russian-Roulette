@@ -41,7 +41,7 @@ namespace MiniGameDemo.UI
             // Scale up the current zone badge slightly for emphasis
             transform.localScale = Vector3.zero;
             float targetScale = isCurrent ? 1.2f : 1f;
-            transform.DOScale(targetScale, 0.4f).SetEase(DG.Tweening.Ease.OutBack);
+            transform.DOScale(targetScale, 0.4f).SetEase(DG.Tweening.Ease.OutBack).SetLink(gameObject);
         }
     }
 }
