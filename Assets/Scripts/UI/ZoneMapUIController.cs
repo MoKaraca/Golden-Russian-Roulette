@@ -77,7 +77,7 @@ namespace MiniGameDemo.UI
             rt.anchorMax        = new Vector2(1f, 1f);
             rt.pivot            = new Vector2(0.5f, 0.5f);
             rt.offsetMin        = new Vector2(182.492f, -42f);  // left, bottom
-            rt.offsetMax        = new Vector2(-193.0576f, -38.84299f);  // right, top
+            rt.offsetMax        = new Vector2(-163.0576f, -38.84299f);  // right, top
 
             // Ensure we have a HorizontalLayoutGroup
             _layoutGroup = GetComponent<HorizontalLayoutGroup>();

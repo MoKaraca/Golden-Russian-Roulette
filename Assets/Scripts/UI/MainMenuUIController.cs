@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 using MiniGameDemo.Core;
 
 namespace MiniGameDemo.UI
@@ -30,8 +31,16 @@ namespace MiniGameDemo.UI
 
         // ------------------------------------------------------------------ Lifecycle
 
+        private CanvasGroup _canvasGroup;
+
         private void Awake()
         {
+            if (_panel_main_menu != null)
+            {
+                _canvasGroup = _panel_main_menu.GetComponent<CanvasGroup>();
+                if (_canvasGroup == null) _canvasGroup = _panel_main_menu.AddComponent<CanvasGroup>();
+            }
+
             // Wire button listeners in code — no Editor onClick references (per spec)
             if (_btn_play_standard != null)
                 _btn_play_standard.onClick.AddListener(() => GameManager.Instance.TryStartGame(false));
@@ -93,8 +102,21 @@ namespace MiniGameDemo.UI
 
         private void HandleStateChanged(GameState state)
         {
-            if (_panel_main_menu != null)
-                _panel_main_menu.SetActive(state == GameState.MainMenu);
+            if (_panel_main_menu == null || _canvasGroup == null) return;
+
+            bool show = state == GameState.MainMenu;
+
+            if (show) _panel_main_menu.SetActive(true);
+
+            _canvasGroup.blocksRaycasts = show;
+            _canvasGroup.interactable = show;
+
+            _canvasGroup.DOFade(show ? 1f : 0f, 0.3f)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    if (!show) _panel_main_menu.SetActive(false);
+                });
         }
 
         private void UpdateCurrencyDisplay(int amount)

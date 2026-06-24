@@ -75,6 +75,7 @@ namespace MiniGameDemo.Wheel
         private readonly List<WheelSliceData>   _currentSlices  = new List<WheelSliceData>();
         private readonly List<WheelSliceVisual> _sliceVisuals   = new List<WheelSliceVisual>();
         private bool _isSpinning;
+        private ZoneTier? _lastTier = null;
 
         // ------------------------------------------------------------------ Events
 
@@ -98,6 +99,9 @@ namespace MiniGameDemo.Wheel
             var config = GameManager.Instance.GetConfig();
             var rules  = config.GetRulesForZone(zoneIndex);
             var tier   = config.GetTierForZone(zoneIndex);
+
+            bool tierChanged = _lastTier == null || _lastTier.Value != tier;
+            _lastTier = tier;
 
             _currentSlices.Clear();
 
@@ -141,7 +145,7 @@ namespace MiniGameDemo.Wheel
                 });
             }
 
-            RebuildSliceVisuals();
+            RebuildSliceVisuals(tierChanged);
             UpdateWheelVisuals(tier);
             OnWheelGenerated?.Invoke(_currentSlices);
         }
@@ -200,7 +204,7 @@ namespace MiniGameDemo.Wheel
 
         // ------------------------------------------------------------------ Slice Visuals
 
-        private void RebuildSliceVisuals()
+        private void RebuildSliceVisuals(bool tierChanged)
         {
             // Destroy existing slice visuals
             foreach (var v in _sliceVisuals)
@@ -243,9 +247,29 @@ namespace MiniGameDemo.Wheel
                 _sliceVisuals.Add(visual);
             }
 
-            // Polish: Pop-in animation for slices
-            _rt_slices_root.localScale = Vector3.zero;
-            _rt_slices_root.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
+            // Polish: Pop-in animation
+            _rt_slices_root.DOKill();
+            
+            if (tierChanged)
+            {
+                // Wheel tier changed (e.g. Bronze -> Silver) -> Pop the entire wheel in
+                _rt_slices_root.localScale = Vector3.zero;
+                _rt_slices_root.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
+            }
+            else
+            {
+                // Staying in the same tier -> Keep wheel static, pop in the individual slice visuals
+                _rt_slices_root.localScale = Vector3.one;
+                
+                // Add a small delay between each slice popping in for a nice visual cascade
+                for (int i = 0; i < _sliceVisuals.Count; i++)
+                {
+                    if (_sliceVisuals[i] == null) continue;
+                    var rt = _sliceVisuals[i].GetComponent<RectTransform>();
+                    rt.localScale = Vector3.zero;
+                    rt.DOScale(1f, 0.3f).SetEase(Ease.OutBack).SetDelay(i * 0.02f);
+                }
+            }
         }
 
         // ------------------------------------------------------------------ DOTween Clockwise Spin (Issue 5)

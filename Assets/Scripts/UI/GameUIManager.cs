@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 using MiniGameDemo.Core;
 using MiniGameDemo.Wheel;
 
@@ -38,8 +39,16 @@ namespace MiniGameDemo.UI
 
         // ------------------------------------------------------------------ Lifecycle
 
+        private CanvasGroup _canvasGroup;
+
         private void Awake()
         {
+            if (_panel_gameplay != null)
+            {
+                _canvasGroup = _panel_gameplay.GetComponent<CanvasGroup>();
+                if (_canvasGroup == null) _canvasGroup = _panel_gameplay.AddComponent<CanvasGroup>();
+            }
+
             WireButtonListeners();
             ClearPanelBackgrounds();
         }
@@ -139,7 +148,20 @@ namespace MiniGameDemo.UI
         {
             bool showGameplay = state == GameState.Playing || state == GameState.Spinning || state == GameState.GameOver;
 
-            SetActive(_panel_gameplay, showGameplay);
+            if (_panel_gameplay != null && _canvasGroup != null)
+            {
+                if (showGameplay) _panel_gameplay.SetActive(true);
+
+                _canvasGroup.blocksRaycasts = showGameplay;
+                _canvasGroup.interactable = showGameplay;
+
+                _canvasGroup.DOFade(showGameplay ? 1f : 0f, 0.3f)
+                    .SetUpdate(true)
+                    .OnComplete(() =>
+                    {
+                        if (!showGameplay) _panel_gameplay.SetActive(false);
+                    });
+            }
 
             // Spin: only when wheel is idle (Playing)
             if (_btn_spin != null) _btn_spin.interactable = state == GameState.Playing;
