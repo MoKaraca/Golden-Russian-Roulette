@@ -75,9 +75,9 @@ namespace MiniGameDemo.UI
             // Anchor: stretch horizontally across the top, fixed height
             rt.anchorMin        = new Vector2(0f, 1f);
             rt.anchorMax        = new Vector2(1f, 1f);
-            rt.pivot            = new Vector2(0.5f, 1f);
-            rt.offsetMin        = new Vector2(10f,  -68f);  // left inset, bottom of strip
-            rt.offsetMax        = new Vector2(-10f,  -8f);  // right inset, top of strip
+            rt.pivot            = new Vector2(0.5f, 0.5f);
+            rt.offsetMin        = new Vector2(182.492f, -42f);  // left, bottom
+            rt.offsetMax        = new Vector2(-193.0576f, -38.84299f);  // right, top
 
             // Ensure we have a HorizontalLayoutGroup
             _layoutGroup = GetComponent<HorizontalLayoutGroup>();

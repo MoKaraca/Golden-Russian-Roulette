@@ -7,13 +7,15 @@ using MiniGameDemo.Wheel;
 namespace MiniGameDemo.UI
 {
     /// <summary>
-    /// Controls visibility and interactability of all gameplay UI panels.
+    /// Controls the gameplay panel: spin button, leave button, wheel generation.
     ///
     /// Rules:
     ///  - Buttons are wired in Awake() — NO Unity Editor onClick references (per spec).
     ///  - OnValidate() auto-finds references by GameObject name in children (per spec).
-    ///  - Leave button is only interactable when GameManager.CanLeave is true.
-    ///  - Revive triggers wheel re-generation for the current zone.
+    ///  - Leave button is interactable whenever wheel is idle (CanLeave == Playing).
+    ///
+    /// NOTE: GameOver panel logic (revive/give-up) has been moved to GameOverPanelController.
+    ///       This class no longer touches ui_panel_gameover, _btn_revive, or _btn_givup.
     ///
     /// Attach to: Canvas_Gameplay
     /// </summary>
@@ -23,7 +25,6 @@ namespace MiniGameDemo.UI
 
         [Header("Panels")]
         [SerializeField] private GameObject _panel_gameplay;
-        [SerializeField] private GameObject _panel_gameover;
 
         [Header("Gameplay Buttons")]
         [SerializeField] private Button _btn_spin;
@@ -32,15 +33,8 @@ namespace MiniGameDemo.UI
         [Header("Zone Display")]
         [SerializeField] private TextMeshProUGUI _txt_zone_value;
 
-        [Header("Game Over")]
-        [SerializeField] private Button          _btn_revive;
-        [SerializeField] private Button          _btn_givup;
-        [SerializeField] private TextMeshProUGUI _txt_revive_cost_value;
-
         [Header("References")]
         [SerializeField] private WheelController _wheelController;
-
-        private const int REVIVE_COST = 25;
 
         // ------------------------------------------------------------------ Lifecycle
 
@@ -57,7 +51,6 @@ namespace MiniGameDemo.UI
         private void ClearPanelBackgrounds()
         {
             ClearImageBackground(_panel_gameplay);
-            ClearImageBackground(_panel_gameover);
         }
 
         private static void ClearImageBackground(GameObject go)
@@ -95,17 +88,10 @@ namespace MiniGameDemo.UI
         {
             FindChildButton(ref _btn_spin,   "btn_spin");
             FindChildButton(ref _btn_leave,  "btn_leave");
-            FindChildButton(ref _btn_revive, "btn_revive");
-            FindChildButton(ref _btn_givup,  "btn_GiveUp");
 
-            FindChildTMP(ref _txt_zone_value,        "txt_zone_value");
-            // NOTE: looks for 'txt_revive_cost_value' (with _value suffix per spec).
-            // The existing static 'revive_cost' label in the scene will NOT be touched.
-            // To show the cost dynamically, add a TMP text named 'txt_revive_cost_value' inside ui_panel_gameover.
-            FindChildTMP(ref _txt_revive_cost_value, "txt_revive_cost_value");
+            FindChildTMP(ref _txt_zone_value, "txt_zone_value");
 
-            FindChildGameObject(ref _panel_gameplay,  "ui_panel_gameplay");
-            FindChildGameObject(ref _panel_gameover,  "ui_panel_gameover");
+            FindChildGameObject(ref _panel_gameplay, "ui_panel_gameplay");
 
             FindChildComponent(ref _wheelController, "ui_panel_wheel_root");
         }
@@ -145,8 +131,6 @@ namespace MiniGameDemo.UI
         {
             if (_btn_spin  != null) _btn_spin.onClick.AddListener(OnSpinClicked);
             if (_btn_leave != null) _btn_leave.onClick.AddListener(OnLeaveClicked);
-            if (_btn_revive!= null) _btn_revive.onClick.AddListener(OnReviveClicked);
-            if (_btn_givup != null) _btn_givup.onClick.AddListener(OnGiveUpClicked);
         }
 
         // ------------------------------------------------------------------ State event handler
@@ -154,26 +138,14 @@ namespace MiniGameDemo.UI
         private void HandleStateChanged(GameState state)
         {
             bool showGameplay = state == GameState.Playing || state == GameState.Spinning || state == GameState.GameOver;
-            bool showGameOver = state == GameState.GameOver;
 
             SetActive(_panel_gameplay, showGameplay);
-            SetActive(_panel_gameover, showGameOver);
 
             // Spin: only when wheel is idle (Playing)
-            if (_btn_spin  != null) _btn_spin.interactable = state == GameState.Playing;
+            if (_btn_spin != null) _btn_spin.interactable = state == GameState.Playing;
 
-            // Leave: only when CanLeave (Playing + Safe/Super zone)
+            // Leave: available whenever the wheel is idle (Playing state), regardless of zone tier.
             RefreshLeaveButton();
-
-            // Game over panel
-            if (showGameOver)
-            {
-                if (_txt_revive_cost_value != null)
-                    _txt_revive_cost_value.text = REVIVE_COST.ToString();
-
-                if (_btn_revive != null)
-                    _btn_revive.interactable = PlayerProfile.HasEnoughCurrency(REVIVE_COST);
-            }
         }
 
         // ------------------------------------------------------------------ Zone event handler
@@ -198,9 +170,7 @@ namespace MiniGameDemo.UI
             if (_wheelController != null) _wheelController.Spin();
         }
 
-        private void OnLeaveClicked()  => GameManager.Instance.LeaveGame();
-        private void OnReviveClicked() => GameManager.Instance.TryRevive(REVIVE_COST);
-        private void OnGiveUpClicked() => GameManager.Instance.GiveUp();
+        private void OnLeaveClicked() => GameManager.Instance.LeaveGame();
 
         // ------------------------------------------------------------------ Helpers
 

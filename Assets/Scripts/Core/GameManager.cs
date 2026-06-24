@@ -26,12 +26,31 @@ namespace MiniGameDemo.Core
             ? _wheelConfig.GetTierForZone(CurrentZone)
             : ZoneTier.Standard;
 
+        // ------------------------------------------------------------------ Multipliers (Issue 6)
+
+        /// <summary>Reward multiplier applied in Silver (Safe) zones — every 5th zone.</summary>
+        public const float SILVER_ZONE_MULTIPLIER = 3f;
+
+        /// <summary>Reward multiplier applied in Gold (Super) zones — every 30th zone.</summary>
+        public const float GOLD_ZONE_MULTIPLIER = 10f;
+
         /// <summary>
-        /// True only when the wheel is idle AND the current zone is Safe or Super.
-        /// This is the only condition under which the Leave button should be interactive.
+        /// Returns the reward multiplier appropriate for the given zone index.
+        /// Super → 10x | Safe → 3x | Standard → 1x.
         /// </summary>
-        public bool CanLeave => CurrentState == GameState.Playing &&
-                                (CurrentZoneTier == ZoneTier.Safe || CurrentZoneTier == ZoneTier.Super);
+        public float GetMultiplierForZone(int zoneIndex)
+        {
+            var tier = _wheelConfig != null ? _wheelConfig.GetTierForZone(zoneIndex) : ZoneTier.Standard;
+            return tier == ZoneTier.Super ? GOLD_ZONE_MULTIPLIER
+                 : tier == ZoneTier.Safe  ? SILVER_ZONE_MULTIPLIER
+                 : 1f;
+        }
+
+        /// <summary>
+        /// True whenever the wheel is idle (state == Playing), regardless of zone tier.
+        /// Per requirements: player can choose to cash out before ANY spin.
+        /// </summary>
+        public bool CanLeave => CurrentState == GameState.Playing;
 
         public IReadOnlyDictionary<RewardItemData, int> CollectedRewards => _collectedRewards;
         private readonly Dictionary<RewardItemData, int> _collectedRewards = new Dictionary<RewardItemData, int>();
@@ -106,10 +125,13 @@ namespace MiniGameDemo.Core
                 return;
             }
 
+            // Apply zone-tier multiplier before storing (Issue 6)
+            int scaledAmount = Mathf.RoundToInt(amount * GetMultiplierForZone(CurrentZone));
+
             if (_collectedRewards.ContainsKey(result))
-                _collectedRewards[result] += amount;
+                _collectedRewards[result] += scaledAmount;
             else
-                _collectedRewards.Add(result, amount);
+                _collectedRewards.Add(result, scaledAmount);
 
             OnRewardCollected?.Invoke(result, _collectedRewards[result]);
 
@@ -119,8 +141,8 @@ namespace MiniGameDemo.Core
         }
 
         /// <summary>
-        /// Grants collected currency rewards to the player profile and returns to main menu.
-        /// Only callable when CanLeave is true — enforced here in addition to UI layer.
+        /// Grants collected rewards (with zone multiplier applied) to the player profile
+        /// and returns to main menu. Callable whenever CanLeave is true (Playing state).
         /// </summary>
         public void LeaveGame()
         {
@@ -130,10 +152,12 @@ namespace MiniGameDemo.Core
                 return;
             }
 
+            float multiplier = GetMultiplierForZone(CurrentZone);
+
             foreach (var kvp in _collectedRewards)
             {
                 if (kvp.Key.rewardType == RewardType.Currency || kvp.Key.rewardType == RewardType.Gold)
-                    PlayerProfile.AddCurrency(kvp.Value);
+                    PlayerProfile.AddCurrency(Mathf.RoundToInt(kvp.Value * multiplier));
             }
 
             ClearRewards();

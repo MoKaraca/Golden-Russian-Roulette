@@ -8,21 +8,29 @@ using MiniGameDemo.Data;
 namespace MiniGameDemo.UI
 {
     /// <summary>
-    /// Shows collected rewards as a compact column on the RIGHT edge of the screen.
-    /// This placement avoids overlapping the wheel (centre) and the spin/leave buttons (bottom centre).
+    /// Shows collected rewards as a compact column on the LEFT edge of the screen.
     ///
-    /// Each item is a small icon (48x48) with an amount badge — no white backgrounds.
-    /// Items stack vertically from the top down; a ScrollRect handles overflow.
+    /// RectTransform anchor setup (Issue 4A):
+    ///   anchorMin = (0, 0)  anchorMax = (0, 1)  pivot = (0, 1)
+    ///   This "left-stretch" anchor snaps the panel to the left side on all aspect ratios
+    ///   (20:9, 16:9, 4:3) without manual repositioning.
     ///
-    /// Attach to: any empty child of Canvas_Gameplay — the script positions itself.
+    /// Each item uses the existing InventoryItemPrefab which already has:
+    ///   - Child "img_reward_icon_value" (Image)  → used for the reward icon
+    ///   - Child "txt_reward_amount_value" (TMP)  → used for the "x2" counter
+    ///
+    /// The code finds these children by name, clears all white backgrounds,
+    /// sets the icon sprite, and writes the counter text.
+    ///
+    /// Attach to: ui_panel_inventory (child of Canvas_Gameplay).
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class InventoryUIController : MonoBehaviour
     {
         // ------------------------------------------------------------------ Inspector
 
-        [Tooltip("Prefab with a WheelSliceUI component. The root Image must exist but " +
-                 "its color will be cleared to transparent at runtime.")]
+        [Tooltip("Prefab with child 'img_reward_icon_value' (Image) and " +
+                 "'txt_reward_amount_value' (TMP). Both are already in the prefab.")]
         [SerializeField] private GameObject _inventoryItemPrefab;
 
         [Tooltip("Size (pixels) of each reward icon square. Default 48 = compact sidebar.")]
@@ -68,21 +76,21 @@ namespace MiniGameDemo.UI
                 return;
             }
 
-            // Right sidebar: full height, anchored to right edge
-            rt.anchorMin = new Vector2(1f, 0f);
-            rt.anchorMax = new Vector2(1f, 1f);
-            rt.pivot     = new Vector2(1f, 1f);
+            // ── Issue 4A: Left sidebar — full height, anchored to LEFT edge ─────
+            // anchorMin = (0,0) anchorMax = (0,1) pivot = (0,1)
+            // Works on all aspect ratios (20:9, 16:9, 4:3) without hard-coded positions.
+            rt.anchorMin = new Vector2(0f, 0f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot     = new Vector2(0f, 1f);
             float panelWidth = _itemSize + 20f;
-            rt.offsetMin = new Vector2(-panelWidth, 80f);   // 80px clearance from bottom (buttons)
-            rt.offsetMax = new Vector2(0f, -70f);            // 70px clearance from top (zone strip)
+            rt.offsetMin = new Vector2(0f,          80f);  // left edge = screen left
+            rt.offsetMax = new Vector2(panelWidth, -70f);  // 70px clearance from top
 
             // Container is fully transparent
             var img = GetComponent<Image>();
             if (img != null) img.color = Color.clear;
 
             // ── Fix: remove any conflicting LayoutGroup type before adding VerticalLayoutGroup ──
-            // Unity only allows ONE LayoutGroup per GameObject. AddComponent returns null and
-            // throws if a different LayoutGroup type already exists.
             var wrongLayouts = GetComponents<HorizontalLayoutGroup>();
             foreach (var l in wrongLayouts) DestroyImmediate(l);
             var gridLayouts = GetComponents<GridLayoutGroup>();
@@ -106,6 +114,7 @@ namespace MiniGameDemo.UI
 
         private void HandleRewardCollected(RewardItemData reward, int totalAmount)
         {
+            // If we already have this reward in the inventory, just update the counter
             if (_activeItems.TryGetValue(reward, out var existing))
             {
                 existing.UpdateAmount(totalAmount);
@@ -141,8 +150,14 @@ namespace MiniGameDemo.UI
 
     /// <summary>
     /// Controls a single reward entry in the inventory sidebar.
-    /// Icon fills a square; amount badge floats in the bottom-right corner.
-    /// No white background — container is completely transparent.
+    ///
+    /// This component is added at runtime to each instantiated InventoryItemPrefab.
+    /// It finds the EXISTING children in the prefab:
+    ///   - "img_reward_icon_value" → Image for the reward icon
+    ///   - "txt_reward_amount_value" → TMP for the "x2" counter
+    ///
+    /// It does NOT create new children — it uses what's already in the prefab,
+    /// clears all white backgrounds, and properly populates icon + counter.
     /// </summary>
     public class InventoryItemUI : MonoBehaviour
     {
@@ -155,77 +170,114 @@ namespace MiniGameDemo.UI
             _rt = GetComponent<RectTransform>();
             _rt.sizeDelta = new Vector2(size, size);
 
-            // Root background → transparent
+            // ── Clear the ROOT Image background (white → transparent) ─────────
             var rootImg = GetComponent<Image>();
             if (rootImg != null) rootImg.color = Color.clear;
 
-            // Build icon image as a child (fills the whole slot)
-            _iconImage = CreateIconImage(size);
-            if (reward.icon != null)
+            // ── Find the EXISTING icon Image child by name ────────────────────
+            // The prefab already has a child called "img_reward_icon_value" with an Image.
+            // We use it instead of creating a duplicate.
+            _iconImage = FindChildImage("img_reward_icon_value");
+
+            if (_iconImage != null)
             {
-                _iconImage.sprite         = reward.icon;
-                _iconImage.preserveAspect = true;
+                // Clear the icon child's default white background
+                // (Unity Images with no sprite show solid white by default)
+                if (reward.icon != null)
+                {
+                    _iconImage.sprite         = reward.icon;
+                    _iconImage.preserveAspect = true;
+                    _iconImage.color          = Color.white;  // tint = white so sprite colours show correctly
+                }
+                else
+                {
+                    // No icon sprite — hide this Image entirely
+                    _iconImage.color = Color.clear;
+                }
+
+                _iconImage.raycastTarget = false;
+
+                // Make icon fill its parent fully
+                var iconRt = _iconImage.GetComponent<RectTransform>();
+                if (iconRt != null)
+                {
+                    iconRt.anchorMin = Vector2.zero;
+                    iconRt.anchorMax = Vector2.one;
+                    iconRt.offsetMin = Vector2.zero;
+                    iconRt.offsetMax = Vector2.zero;
+                }
             }
 
-            // Build tiny amount badge in bottom-right corner
-            _amountText = CreateAmountBadge(size);
+            // ── Find the EXISTING TMP child by name ───────────────────────────
+            // The prefab already has a child called "txt_reward_amount_value" with TMP.
+            // We reuse it for the counter instead of creating a duplicate.
+            _amountText = FindChildTMP("txt_reward_amount_value");
+
+            if (_amountText != null)
+            {
+                // Configure the counter badge: small, bold, bottom-right corner
+                _amountText.fontSize           = Mathf.Clamp(size * 0.28f, 10f, 18f);
+                _amountText.color              = Color.white;
+                _amountText.fontStyle           = FontStyles.Bold;
+                _amountText.alignment           = TextAlignmentOptions.BottomRight;
+                _amountText.raycastTarget       = false;
+                _amountText.enableWordWrapping  = false;
+
+                // Dark outline so the count reads clearly on any icon
+                _amountText.outlineWidth = 0.3f;
+                _amountText.outlineColor = new Color32(0, 0, 0, 200);
+
+                // Position badge in bottom-right corner of the icon
+                var textRt = _amountText.GetComponent<RectTransform>();
+                if (textRt != null)
+                {
+                    textRt.anchorMin        = new Vector2(0f, 0f);
+                    textRt.anchorMax        = new Vector2(1f, 0.4f);
+                    textRt.offsetMin        = Vector2.zero;
+                    textRt.offsetMax        = Vector2.zero;
+                }
+            }
 
             UpdateAmount(amount);
         }
 
+        /// <summary>
+        /// Updates the "x2", "x3" etc. counter text. Called when the same reward is collected again.
+        /// </summary>
         public void UpdateAmount(int amount)
         {
             if (_amountText != null)
                 _amountText.text = $"x{amount}";
         }
 
-        // ── Factory helpers ────────────────────────────────────────
+        // ── Find helpers — searches existing prefab children by name ──────
 
-        private Image CreateIconImage(float size)
+        private Image FindChildImage(string childName)
         {
-            var go = new GameObject("img_icon_value", typeof(RectTransform), typeof(Image));
-            go.transform.SetParent(transform, false);
-
-            var rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
-            rt.offsetMin = Vector2.zero;
-            rt.offsetMax = Vector2.zero;
-
-            var img = go.GetComponent<Image>();
-            img.raycastTarget = false;   // Per spec: no RaycastTarget on non-interactive images
-            img.maskable      = false;   // Per spec: no Maskable on unnecessary images
-            return img;
+            foreach (Transform child in transform)
+            {
+                if (child.gameObject.name == childName)
+                {
+                    var img = child.GetComponent<Image>();
+                    if (img != null) return img;
+                }
+            }
+            // Fallback: any child Image
+            return GetComponentInChildren<Image>();
         }
 
-        private TextMeshProUGUI CreateAmountBadge(float size)
+        private TextMeshProUGUI FindChildTMP(string childName)
         {
-            // Small badge pinned to bottom-right of the icon
-            float badgeSize = size * 0.45f;
-
-            var go = new GameObject("txt_amount_value", typeof(RectTransform), typeof(TextMeshProUGUI));
-            go.transform.SetParent(transform, false);
-
-            var rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(1f, 0f);
-            rt.anchorMax = new Vector2(1f, 0f);
-            rt.pivot     = new Vector2(1f, 0f);
-            rt.sizeDelta = new Vector2(badgeSize * 2f, badgeSize);
-            rt.anchoredPosition = new Vector2(4f, -2f); // slight overlap with icon edge
-
-            var tmp = go.GetComponent<TextMeshProUGUI>();
-            tmp.fontSize          = Mathf.Clamp(size * 0.22f, 8f, 14f);
-            tmp.color             = Color.white;
-            tmp.fontStyle         = FontStyles.Bold;
-            tmp.alignment         = TextAlignmentOptions.Right;
-            tmp.raycastTarget     = false;
-            tmp.enableWordWrapping = false;
-
-            // Dark outline so the count reads on any background
-            tmp.outlineWidth = 0.3f;
-            tmp.outlineColor = new Color32(0, 0, 0, 200);
-
-            return tmp;
+            foreach (Transform child in transform)
+            {
+                if (child.gameObject.name == childName)
+                {
+                    var tmp = child.GetComponent<TextMeshProUGUI>();
+                    if (tmp != null) return tmp;
+                }
+            }
+            // Fallback: any child TMP
+            return GetComponentInChildren<TextMeshProUGUI>();
         }
     }
 }
