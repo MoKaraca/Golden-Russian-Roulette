@@ -125,13 +125,10 @@ namespace MiniGameDemo.Core
                 return;
             }
 
-            // Apply zone-tier multiplier before storing (Issue 6)
-            int scaledAmount = Mathf.RoundToInt(amount * GetMultiplierForZone(CurrentZone));
-
             if (_collectedRewards.ContainsKey(result))
-                _collectedRewards[result] += scaledAmount;
+                _collectedRewards[result] += amount;
             else
-                _collectedRewards.Add(result, scaledAmount);
+                _collectedRewards.Add(result, amount);
 
             OnRewardCollected?.Invoke(result, _collectedRewards[result]);
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 using MiniGameDemo.Core;
 using MiniGameDemo.Data;
 
@@ -14,10 +15,11 @@ namespace MiniGameDemo.UI
     ///   anchorMin = (0, 0)  anchorMax = (0, 1)  pivot = (0, 1)
     ///   This "left-stretch" anchor snaps the panel to the left side on all aspect ratios
     ///   (20:9, 16:9, 4:3) without manual repositioning.
-    ///
     /// Each item uses the existing InventoryItemPrefab which already has:
     ///   - Child "img_reward_icon_value" (Image)  → used for the reward icon
     ///   - Child "txt_reward_amount_value" (TMP)  → used for the "x2" counter
+    ///
+    /// The grid lays out 11 rows per column before moving to the next column.
     ///
     /// The code finds these children by name, clears all white backgrounds,
     /// sets the icon sprite, and writes the counter text.
@@ -82,31 +84,34 @@ namespace MiniGameDemo.UI
             rt.anchorMin = new Vector2(0f, 0f);
             rt.anchorMax = new Vector2(0f, 1f);
             rt.pivot     = new Vector2(0f, 1f);
-            float panelWidth = _itemSize + 20f;
-            rt.offsetMin = new Vector2(0f,          80f);  // left edge = screen left
-            rt.offsetMax = new Vector2(panelWidth, -70f);  // 70px clearance from top
+            
+            // Allow horizontal expansion up to roughly 3 columns worth of space (200px)
+            rt.offsetMin = new Vector2(0f,          80f);  // left edge
+            rt.offsetMax = new Vector2(200f,       -70f);  // 70px clearance from top
 
             // Container is fully transparent
             var img = GetComponent<Image>();
             if (img != null) img.color = Color.clear;
 
-            // ── Fix: remove any conflicting LayoutGroup type before adding VerticalLayoutGroup ──
+            // ── Remove conflicting LayoutGroup types ──
             var wrongLayouts = GetComponents<HorizontalLayoutGroup>();
             foreach (var l in wrongLayouts) DestroyImmediate(l);
-            var gridLayouts = GetComponents<GridLayoutGroup>();
-            foreach (var l in gridLayouts) DestroyImmediate(l);
+            var verticalLayouts = GetComponents<VerticalLayoutGroup>();
+            foreach (var l in verticalLayouts) DestroyImmediate(l);
 
-            // Now safe to get-or-add VerticalLayoutGroup
-            var layout = GetComponent<VerticalLayoutGroup>();
-            if (layout == null) layout = gameObject.AddComponent<VerticalLayoutGroup>();
+            // Now safe to get-or-add GridLayoutGroup
+            var layout = GetComponent<GridLayoutGroup>();
+            if (layout == null) layout = gameObject.AddComponent<GridLayoutGroup>();
 
-            layout.childAlignment         = TextAnchor.UpperCenter;
-            layout.spacing                = _itemSpacing;
-            layout.childForceExpandWidth  = false;
-            layout.childForceExpandHeight = false;
-            layout.childControlWidth      = false;
-            layout.childControlHeight     = false;
-            layout.padding                = new RectOffset(4, 4, 8, 8);
+            // Setup for 11 items per column then wrap to next column
+            layout.startAxis = GridLayoutGroup.Axis.Vertical;
+            layout.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+            layout.constraintCount = 11;
+            
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.cellSize = new Vector2(_itemSize, _itemSize);
+            layout.spacing = new Vector2(_itemSpacing, _itemSpacing);
+            layout.padding = new RectOffset(4, 4, 8, 8);
         }
 
 
@@ -247,7 +252,17 @@ namespace MiniGameDemo.UI
         public void UpdateAmount(int amount)
         {
             if (_amountText != null)
+            {
                 _amountText.text = $"x{amount}";
+                
+                // Add a small scale bounce for polish when updating
+                if (amount > 1 && _rt != null)
+                {
+                    _rt.DOKill();
+                    _rt.localScale = Vector3.one;
+                    _rt.DOPunchScale(Vector3.one * 0.2f, 0.3f, 10, 1f);
+                }
+            }
         }
 
         // ── Find helpers — searches existing prefab children by name ──────

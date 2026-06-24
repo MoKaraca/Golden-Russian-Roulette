@@ -1,6 +1,9 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
+using DG.Tweening;
 using MiniGameDemo.Core;
 
 namespace MiniGameDemo.UI
@@ -164,7 +167,16 @@ namespace MiniGameDemo.UI
                                  "Drag ui_panel_gameover from the Hierarchy into this field.");
                 return;
             }
-            _gameOverPanel.SetActive(visible);
+            if (visible)
+            {
+                _gameOverPanel.SetActive(true);
+                _gameOverPanel.transform.localScale = Vector3.zero;
+                _gameOverPanel.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            }
+            else
+            {
+                _gameOverPanel.SetActive(false);
+            }
         }
 
         // ------------------------------------------------------------------ Button Callbacks

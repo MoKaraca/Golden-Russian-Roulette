@@ -24,9 +24,6 @@ namespace MiniGameDemo.Wheel
         // ------------------------------------------------------------------ Inspector
 
         [Header("Wheel Transforms")]
-        [Tooltip("The RectTransform that physically rotates during the spin (ui_animator_wheel).")]
-        [SerializeField] private RectTransform _rt_wheel_spin;
-
         [Tooltip("The RectTransform that is the parent for slice visual prefabs (ui_image_wheel_base_value).")]
         [SerializeField] private RectTransform _rt_slices_root;
 
@@ -105,7 +102,8 @@ namespace MiniGameDemo.Wheel
             _currentSlices.Clear();
 
             bool addBomb      = tier == ZoneTier.Standard;
-            int  rewardCount  = addBomb ? rules.sliceCount - 1 : rules.sliceCount;
+            int   rewardCount  = addBomb ? rules.sliceCount - 1 : rules.sliceCount;
+            float multiplier   = GameManager.Instance.GetMultiplierForZone(zoneIndex);
 
             // ── Build the reward pool (exclude any bomb-type items) ───────────
             List<RewardItemData> rewardPool = BuildRewardPool(rules);
@@ -117,15 +115,16 @@ namespace MiniGameDemo.Wheel
                 return;
             }
 
-            // ── Issue 3: Select DISTINCT rewards via weighted sampling ────────
+            // ── Select DISTINCT rewards via weighted sampling ────────
             List<RewardItemData> selectedRewards = SelectDistinctRewards(rewardPool, rewardCount);
 
             foreach (var reward in selectedRewards)
             {
+                int baseAmount = reward.GetAmountForZone(zoneIndex);
                 _currentSlices.Add(new WheelSliceData
                 {
                     reward = reward,
-                    amount = reward.GetAmountForZone(zoneIndex),
+                    amount = Mathf.RoundToInt(baseAmount * multiplier),
                     weight = reward.baseWeight
                 });
             }
@@ -243,6 +242,10 @@ namespace MiniGameDemo.Wheel
 
                 _sliceVisuals.Add(visual);
             }
+
+            // Polish: Pop-in animation for slices
+            _rt_slices_root.localScale = Vector3.zero;
+            _rt_slices_root.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
         }
 
         // ------------------------------------------------------------------ DOTween Clockwise Spin (Issue 5)
@@ -263,7 +266,7 @@ namespace MiniGameDemo.Wheel
         private void SpinClockwise(int targetIndex)
         {
             float sliceAngleDeg = 360f / _currentSlices.Count;
-            float currentZ      = _rt_wheel_spin.eulerAngles.z;
+            float currentZ      = _rt_slices_root.eulerAngles.z;
 
             // Normalise into [0, 360)
             float normZ = ((currentZ % 360f) + 360f) % 360f;
@@ -280,9 +283,9 @@ namespace MiniGameDemo.Wheel
             float finalZ = currentZ - cwDelta; // CW = decreasing Z
 
             // Kill any existing tween on the wheel
-            _rt_wheel_spin.DOKill();
+            _rt_slices_root.DOKill();
 
-            _rt_wheel_spin
+            _rt_slices_root
                 .DORotate(new Vector3(0f, 0f, finalZ), _spinDuration, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutCubic)
                 .OnComplete(() =>
