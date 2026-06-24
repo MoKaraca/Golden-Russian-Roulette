@@ -95,10 +95,10 @@ namespace MiniGameDemo.UI
         /// </summary>
         private void OnValidate()
         {
-            FindChildButton(ref _btn_spin,   "btn_spin");
-            FindChildButton(ref _btn_leave,  "btn_leave");
+            FindChildButton(ref _btn_spin, "ui_btn_spin");
+            FindChildButton(ref _btn_leave, "ui_btn_leave");
 
-            FindChildTMP(ref _txt_zone_value, "txt_zone_value");
+            FindChildTMP(ref _txt_zone_value, "ui_txt_zone_value");
 
             FindChildGameObject(ref _panel_gameplay, "ui_panel_gameplay");
 
@@ -107,21 +107,20 @@ namespace MiniGameDemo.UI
 
         private void FindChildButton(ref Button field, string goName)
         {
-            if (field != null) return;
             foreach (var b in GetComponentsInChildren<Button>(true))
-                if (b.gameObject.name == goName) { field = b; break; }
+                if (b.gameObject.name == goName) { field = b; return; }
+            field = null;
         }
 
         private void FindChildTMP(ref TextMeshProUGUI field, string goName)
         {
-            if (field != null) return;
             foreach (var t in GetComponentsInChildren<TextMeshProUGUI>(true))
-                if (t.gameObject.name == goName) { field = t; break; }
+                if (t.gameObject.name == goName) { field = t; return; }
+            field = null;
         }
 
         private void FindChildGameObject(ref GameObject field, string goName)
         {
-            if (field != null) return;
             foreach (var tr in GetComponentsInChildren<Transform>(true))
                 if (tr.gameObject.name == goName) { field = tr.gameObject; break; }
         }

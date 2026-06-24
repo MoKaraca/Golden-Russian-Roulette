@@ -105,14 +105,13 @@ namespace MiniGameDemo.UI
         /// </summary>
         private void OnValidate()
         {
-            if (_gameOverPanel == null)
-                _gameOverPanel = FindChildByName("ui_panel_gameover");
+            _gameOverPanel = FindChildByName("ui_panel_gameover");
 
-            if (_btn_revive == null) FindChildButton(ref _btn_revive, "btn_revive");
-            if (_btn_giveUp == null) FindChildButton(ref _btn_giveUp, "btn_GiveUp");
+            FindChildButton(ref _btn_revive, "ui_btn_revive");
+            FindChildButton(ref _btn_giveUp, "ui_btn_give_up");
 
-            if (_txt_revive_cost == null) FindChildTMP(ref _txt_revive_cost, "txt_revive_cost_value");
-            if (_txt_title == null)       FindChildTMP(ref _txt_title, "bomb_txt");
+            FindChildTMP(ref _txt_revive_cost, "ui_txt_revive_cost_value");
+            FindChildTMP(ref _txt_title, "ui_txt_bomb_title");
         }
 
         private GameObject FindChildByName(string goName)
@@ -126,12 +125,14 @@ namespace MiniGameDemo.UI
         {
             foreach (var b in GetComponentsInChildren<Button>(true))
                 if (b.gameObject.name == goName) { field = b; return; }
+            field = null;
         }
 
         private void FindChildTMP(ref TextMeshProUGUI field, string goName)
         {
             foreach (var t in GetComponentsInChildren<TextMeshProUGUI>(true))
                 if (t.gameObject.name == goName) { field = t; return; }
+            field = null;
         }
 #endif
 

@@ -70,31 +70,41 @@ namespace MiniGameDemo.UI
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            FindChildButton(ref _btn_play_standard, "btn_Play50");
-            FindChildButton(ref _btn_play_skip,     "btn_Play500");
-            FindChildTMP(ref _txt_currency_value,   "Currency_text");
+            _panel_main_menu = FindChildByName("ui_panel_main_menu");
+
+            FindChildButton(ref _btn_play_standard, "ui_btn_play_standard");
+            FindChildButton(ref _btn_play_skip, "ui_btn_play_super");
+
+            FindChildTMP(ref _txt_currency_value, "ui_txt_currency_value");
             FindChildGameObject(ref _panel_main_menu, "Canvas");
+        }
+
+        private GameObject FindChildByName(string goName)
+        {
+            foreach (var tr in GetComponentsInChildren<Transform>(true))
+                if (tr.gameObject.name == goName) return tr.gameObject;
+            return null;
         }
 
         private void FindChildButton(ref Button field, string goName)
         {
-            if (field != null) return;
             foreach (var b in GetComponentsInChildren<Button>(true))
-                if (b.gameObject.name == goName) { field = b; break; }
+                if (b.gameObject.name == goName) { field = b; return; }
+            field = null;
         }
 
         private void FindChildTMP(ref TextMeshProUGUI field, string goName)
         {
-            if (field != null) return;
             foreach (var t in GetComponentsInChildren<TextMeshProUGUI>(true))
-                if (t.gameObject.name == goName) { field = t; break; }
+                if (t.gameObject.name == goName) { field = t; return; }
+            field = null;
         }
 
         private void FindChildGameObject(ref GameObject field, string goName)
         {
-            if (field != null) return;
             foreach (var tr in GetComponentsInChildren<Transform>(true))
-                if (tr.gameObject.name == goName) { field = tr.gameObject; break; }
+                if (tr.gameObject.name == goName) { field = tr.gameObject; return; }
+            field = null;
         }
 #endif
 
