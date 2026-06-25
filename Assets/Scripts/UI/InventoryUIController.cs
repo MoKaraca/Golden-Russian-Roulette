@@ -50,7 +50,7 @@ namespace MiniGameDemo.UI
 
         private void Awake()
         {
-            SetupLayout();
+            SetupGridLayout();
         }
 
         private void OnEnable()
@@ -67,51 +67,33 @@ namespace MiniGameDemo.UI
             GameManager.Instance.OnRewardsCleared  -= HandleRewardsCleared;
         }
 
-        // ------------------------------------------------------------------ Layout (programmatic)
+        // ------------------------------------------------------------------ Layout
 
-        private void SetupLayout()
+        /// <summary>
+        /// Only configures the GridLayoutGroup settings (item size, spacing).
+        /// The panel's RectTransform position and size are controlled entirely
+        /// from the Unity Inspector — nothing is overridden here.
+        /// </summary>
+        private void SetupGridLayout()
         {
-            var rt = GetComponent<RectTransform>();
-            if (rt == null)
-            {
-                Debug.LogError("[InventoryUIController] No RectTransform found! Make sure this is on a UI object.");
-                return;
-            }
-
-            // ── Issue 4A: Left sidebar — full height, anchored to LEFT edge ─────
-            // anchorMin = (0,0) anchorMax = (0,1) pivot = (0,1)
-            // Works on all aspect ratios (20:9, 16:9, 4:3) without hard-coded positions.
-            rt.anchorMin = new Vector2(0f, 0f);
-            rt.anchorMax = new Vector2(0f, 1f);
-            rt.pivot     = new Vector2(0f, 1f);
-            
-            // Allow horizontal expansion up to roughly 3 columns worth of space (200px)
-            rt.offsetMin = new Vector2(0f,          80f);  // left edge
-            rt.offsetMax = new Vector2(200f,       -70f);  // 70px clearance from top
-
-            // Container is fully transparent
-            var img = GetComponent<Image>();
-            if (img != null) img.color = Color.clear;
-
-            // ── Remove conflicting LayoutGroup types ──
-            var wrongLayouts = GetComponents<HorizontalLayoutGroup>();
-            foreach (var l in wrongLayouts) DestroyImmediate(l);
-            var verticalLayouts = GetComponents<VerticalLayoutGroup>();
-            foreach (var l in verticalLayouts) DestroyImmediate(l);
+            // Remove any conflicting layout group types first
+            var hLayout = GetComponent<HorizontalLayoutGroup>();
+            if (hLayout != null) DestroyImmediate(hLayout);
+            var vLayout = GetComponent<VerticalLayoutGroup>();
+            if (vLayout != null) DestroyImmediate(vLayout);
 
             // Now safe to get-or-add GridLayoutGroup
             var layout = GetComponent<GridLayoutGroup>();
             if (layout == null) layout = gameObject.AddComponent<GridLayoutGroup>();
 
-            // Setup for 11 items per column then wrap to next column
-            layout.startAxis = GridLayoutGroup.Axis.Vertical;
-            layout.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+            // These values come from the Inspector fields on this component
+            layout.startAxis       = GridLayoutGroup.Axis.Vertical;
+            layout.constraint      = GridLayoutGroup.Constraint.FixedRowCount;
             layout.constraintCount = 11;
-            
-            layout.childAlignment = TextAnchor.UpperLeft;
-            layout.cellSize = new Vector2(_itemSize, _itemSize);
-            layout.spacing = new Vector2(_itemSpacing, _itemSpacing);
-            layout.padding = new RectOffset(4, 4, 8, 8);
+            layout.childAlignment  = TextAnchor.UpperLeft;
+            layout.cellSize        = new Vector2(_itemSize, _itemSize);
+            layout.spacing         = new Vector2(_itemSpacing, _itemSpacing);
+            layout.padding         = new RectOffset(4, 4, 8, 8);
         }
 
 

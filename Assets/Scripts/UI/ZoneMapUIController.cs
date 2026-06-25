@@ -45,7 +45,7 @@ namespace MiniGameDemo.UI
 
         private void Awake()
         {
-            SetupStripLayout();
+            SetupLayoutGroup();
         }
 
         private void Start()
@@ -62,39 +62,27 @@ namespace MiniGameDemo.UI
             GameManager.Instance.OnStateChanged -= OnStateChanged;
         }
 
-        // ------------------------------------------------------------------ Layout setup (programmatic)
+        // ------------------------------------------------------------------ Layout setup
 
         /// <summary>
-        /// Forces the strip to sit at the TOP of its parent canvas, full-width, height 60px.
-        /// This overrides whatever RectTransform values were set in the editor.
+        /// Only configures the HorizontalLayoutGroup settings.
+        /// The strip's RectTransform position and size are controlled entirely
+        /// from the Unity Inspector — nothing is overridden here.
         /// </summary>
-        private void SetupStripLayout()
+        private void SetupLayoutGroup()
         {
-            var rt = GetComponent<RectTransform>();
-
-            // Anchor: stretch horizontally across the top, fixed height
-            rt.anchorMin        = new Vector2(0f, 1f);
-            rt.anchorMax        = new Vector2(1f, 1f);
-            rt.pivot            = new Vector2(0.5f, 0.5f);
-            rt.offsetMin        = new Vector2(182.492f, -42f);  // left, bottom
-            rt.offsetMax        = new Vector2(-163.0576f, -38.84299f);  // right, top
-
-            // Ensure we have a HorizontalLayoutGroup
+            // Get-or-add HorizontalLayoutGroup only — do NOT touch the RectTransform
             _layoutGroup = GetComponent<HorizontalLayoutGroup>();
             if (_layoutGroup == null)
                 _layoutGroup = gameObject.AddComponent<HorizontalLayoutGroup>();
 
-            _layoutGroup.childAlignment          = TextAnchor.MiddleCenter;
-            _layoutGroup.spacing                 = 4f;
-            _layoutGroup.childForceExpandWidth   = false;
-            _layoutGroup.childForceExpandHeight  = false;
-            _layoutGroup.childControlWidth       = false;
-            _layoutGroup.childControlHeight      = false;
-            _layoutGroup.padding                 = new RectOffset(8, 8, 4, 4);
-
-            // No background on the strip itself — it should be invisible
-            var img = GetComponent<Image>();
-            if (img != null) img.color = Color.clear;
+            _layoutGroup.childAlignment         = TextAnchor.MiddleCenter;
+            _layoutGroup.spacing                = 4f;
+            _layoutGroup.childForceExpandWidth  = false;
+            _layoutGroup.childForceExpandHeight = false;
+            _layoutGroup.childControlWidth      = false;
+            _layoutGroup.childControlHeight     = false;
+            _layoutGroup.padding                = new RectOffset(8, 8, 4, 4);
         }
 
         // ------------------------------------------------------------------ Events
