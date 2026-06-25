@@ -15,8 +15,7 @@ namespace MiniGameDemo.Core
 
         public static void ResetForDemo()
         {
-            PlayerPrefs.SetInt(CURRENCY_KEY, 1000);
-            PlayerPrefs.Save();
+            Currency = 1000;
         }
 
         public static int Currency
