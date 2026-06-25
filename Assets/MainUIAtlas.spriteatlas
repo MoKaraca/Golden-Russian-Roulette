@@ -14,7 +14,7 @@ SpriteAtlas:
       anisoLevel: 1
       compressionQuality: 50
       maxTextureSize: 2048
-      textureCompression: 0
+      textureCompression: 2
       filterMode: 1
       generateMipMaps: 0
       readable: 0
@@ -103,7 +103,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2347470aa3ddade46bcbfaa54b42bf5c, type: 3}
   - {fileID: 21300000, guid: 093cfa2ab9bfe8c42b84785794636452, type: 3}
   - {fileID: 21300000, guid: 3a195c5ae23f22f448b8ebd1c599c25a, type: 3}
-  - {fileID: 21300000, guid: 2101cb7a87c72194a8688b1f009bcd24, type: 3}
   - {fileID: 21300000, guid: 4824ffca1e746ab41a876eaad00eee77, type: 3}
   - {fileID: 21300000, guid: b28f466b646fcf8439240620da83a48f, type: 3}
   - {fileID: 21300000, guid: 5b66aa6b61c3a4a4aacfcd1dedee8251, type: 3}
@@ -113,13 +112,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 624060db369742b4888ca9ae14dde064, type: 3}
   - {fileID: 21300000, guid: 51dfd1bc48a59f44495ca1f7a38867e5, type: 3}
   - {fileID: 21300000, guid: b00fd7ecc013c1042b2d98c2e4616d68, type: 3}
-  - {fileID: 21300000, guid: 21ff6fbd90181f740bd1bda08e0fe56d, type: 3}
   - {fileID: 21300000, guid: 217cee1ec47cd8c4a99327cc97eb11fc, type: 3}
   - {fileID: 21300000, guid: d10c035ee40126c42999b366c622ff7a, type: 3}
   - {fileID: 21300000, guid: c74c308e3c1a1bd41b2d1b0bd19a87c7, type: 3}
   - {fileID: 21300000, guid: 6ef1faae053236540b2170a627a87a66, type: 3}
-  - {fileID: 21300000, guid: b4d5bdde2b1788b40b9039b4603c1b39, type: 3}
-  - {fileID: 21300000, guid: 617d69ee50ce7f5488cc91be4024bc08, type: 3}
   - {fileID: 21300000, guid: 5cd753ffcff621e4293e3f362b03ef2b, type: 3}
   m_PackedSpriteNamesToIndex:
   - ui_spin_bronze_base
@@ -163,7 +159,6 @@ SpriteAtlas:
   - UI_icon_chest_silver_nolight
   - UI_icon_chest_gold_nolight
   - UI_icon_chest_super_nolight
-  - UI_Icons_Submachine_Points
   - ui_spin_bronze_indicator
   - UI_Icons_Rifle_Points
   - UI_icon_cash
@@ -173,13 +168,10 @@ SpriteAtlas:
   - ui_card_panel_zone_super
   - UI_Icons_SMG_Points
   - ui_card_panel_zone_white
-  - UI_Icons_Vest_Points
   - UI_Icons_Shotgun_Points
   - UI_Icons_Pistol_Points
   - UI_Icon_Renders_tier2_mle
   - UI_button_orange_standard
-  - ui_vfx_offer_shine
-  - UI_Icons_Pistol_Points_
   - UI_icon_chest_standart_nolight
   m_RenderDataMap: {}
   m_Tag: MainUIAtlas

@@ -106,11 +106,6 @@ namespace MiniGameDemo.UI
 
         private void RebuildStrip()
         {
-            // Destroy old badges
-            foreach (Transform child in transform)
-                Destroy(child.gameObject);
-            _badges.Clear();
-
             if (_zoneItemPrefab == null) return;
 
             var config = GameManager.Instance.GetConfig();
@@ -118,24 +113,36 @@ namespace MiniGameDemo.UI
             // Show a window: 1 zone before current, then up to _visibleZoneCount ahead
             int windowStart = Mathf.Max(1, _currentZone - 1);
             int windowEnd   = windowStart + _visibleZoneCount - 1;
+            int needed = _visibleZoneCount;
 
-            for (int z = windowStart; z <= windowEnd; z++)
+            while (_badges.Count < needed)
             {
-                var tier      = config.GetTierForZone(z);
-                bool isCurrent = z == _currentZone;
-
-                Color color = isCurrent          ? COLOR_CURRENT  :
-                              tier == ZoneTier.Super ? COLOR_SUPER   :
-                              tier == ZoneTier.Safe  ? COLOR_SAFE    :
-                                                       COLOR_STANDARD;
-
                 var obj  = Instantiate(_zoneItemPrefab, transform);
                 var item = obj.GetComponent<ZoneItemUI>();
-                if (item == null)
-                    item = obj.AddComponent<ZoneItemUI>();
-
-                item.Setup(z, color, isCurrent);
+                if (item == null) item = obj.AddComponent<ZoneItemUI>();
                 _badges.Add(item);
+            }
+
+            for (int i = 0; i < _badges.Count; i++)
+            {
+                if (i < needed)
+                {
+                    _badges[i].gameObject.SetActive(true);
+                    int z = windowStart + i;
+                    var tier      = config.GetTierForZone(z);
+                    bool isCurrent = z == _currentZone;
+
+                    Color color = isCurrent          ? COLOR_CURRENT  :
+                                  tier == ZoneTier.Super ? COLOR_SUPER   :
+                                  tier == ZoneTier.Safe  ? COLOR_SAFE    :
+                                                           COLOR_STANDARD;
+
+                    _badges[i].Setup(z, color, isCurrent);
+                }
+                else
+                {
+                    _badges[i].gameObject.SetActive(false);
+                }
             }
         }
     }

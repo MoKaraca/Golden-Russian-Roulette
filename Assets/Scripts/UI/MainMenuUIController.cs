@@ -70,13 +70,14 @@ namespace MiniGameDemo.UI
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            if (_panel_main_menu != null && _btn_play_standard != null && _btn_play_skip != null && _txt_currency_value != null) return;
+
             _panel_main_menu = FindChildByName("ui_panel_main_menu");
 
             FindChildButton(ref _btn_play_standard, "ui_btn_play_standard");
             FindChildButton(ref _btn_play_skip, "ui_btn_play_super");
 
             FindChildTMP(ref _txt_currency_value, "ui_txt_currency_value");
-            FindChildGameObject(ref _panel_main_menu, "Canvas");
         }
 
         private GameObject FindChildByName(string goName)

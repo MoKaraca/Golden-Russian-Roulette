@@ -19,6 +19,16 @@ namespace MiniGameDemo.UI
 
         private void Start()
         {
+            ApplyScale();
+        }
+
+        private void OnRectTransformDimensionsChange()
+        {
+            ApplyScale();
+        }
+
+        private void ApplyScale()
+        {
             float currentAspect = (float)Screen.width / Screen.height;
 
             // If the screen is wider than 16:9 (like 20:9)

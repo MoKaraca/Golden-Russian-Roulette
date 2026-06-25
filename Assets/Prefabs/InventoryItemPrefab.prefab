@@ -222,7 +222,6 @@ GameObject:
   - component: {fileID: 1580491303244525037}
   - component: {fileID: 5698848482213773802}
   - component: {fileID: 6800817283238646253}
-  - component: {fileID: 1272458987693314683}
   m_Layer: 5
   m_Name: InventoryItemPrefab
   m_TagString: Untagged
@@ -290,17 +289,4 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1272458987693314683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8843713610444776058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2274917c628261249941caa40f25bc8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  img_reward_icon_value: {fileID: 5190317514788638106}
-  txt_reward_amount_value: {fileID: 4113851672126623113}
+

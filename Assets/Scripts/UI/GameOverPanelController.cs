@@ -1,7 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
 using MiniGameDemo.Core;
@@ -105,6 +103,8 @@ namespace MiniGameDemo.UI
         /// </summary>
         private void OnValidate()
         {
+            if (_gameOverPanel != null && _btn_revive != null && _btn_giveUp != null && _txt_revive_cost != null && _txt_title != null) return;
+
             _gameOverPanel = FindChildByName("ui_panel_gameover");
 
             FindChildButton(ref _btn_revive, "ui_btn_revive");

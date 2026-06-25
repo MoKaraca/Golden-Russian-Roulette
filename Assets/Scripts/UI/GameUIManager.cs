@@ -95,6 +95,8 @@ namespace MiniGameDemo.UI
         /// </summary>
         private void OnValidate()
         {
+            if (_btn_spin != null && _btn_leave != null && _txt_zone_value != null && _panel_gameplay != null && _wheelController != null) return;
+
             FindChildButton(ref _btn_spin, "ui_btn_spin");
             FindChildButton(ref _btn_leave, "ui_btn_leave");
 

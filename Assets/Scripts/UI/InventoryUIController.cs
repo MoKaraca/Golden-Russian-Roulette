@@ -126,7 +126,10 @@ namespace MiniGameDemo.UI
         private void HandleRewardsCleared()
         {
             foreach (Transform child in transform)
+            {
+                DOTween.Kill(child);
                 Destroy(child.gameObject);
+            }
             _activeItems.Clear();
         }
     }

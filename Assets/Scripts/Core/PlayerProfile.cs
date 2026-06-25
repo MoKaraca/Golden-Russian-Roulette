@@ -13,6 +13,8 @@ namespace MiniGameDemo.Core
         
         public static event Action<int> OnCurrencyChanged;
 
+        private static int _cachedCurrency = -1;
+
         public static void ResetForDemo()
         {
             Currency = 1000;
@@ -20,12 +22,24 @@ namespace MiniGameDemo.Core
 
         public static int Currency
         {
-            get => PlayerPrefs.GetInt(CURRENCY_KEY, 1000);
+            get
+            {
+                if (_cachedCurrency < 0) _cachedCurrency = PlayerPrefs.GetInt(CURRENCY_KEY, 1000);
+                return _cachedCurrency;
+            }
             set
             {
-                PlayerPrefs.SetInt(CURRENCY_KEY, value);
-                PlayerPrefs.Save();
+                _cachedCurrency = value;
                 OnCurrencyChanged?.Invoke(value);
+            }
+        }
+
+        public static void PersistToDisk()
+        {
+            if (_cachedCurrency >= 0)
+            {
+                PlayerPrefs.SetInt(CURRENCY_KEY, _cachedCurrency);
+                PlayerPrefs.Save();
             }
         }
 

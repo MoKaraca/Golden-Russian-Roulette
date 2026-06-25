@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 
   rewardType: 3
-  icon: {fileID: 21300000, guid: 21ff6fbd90181f740bd1bda08e0fe56d, type: 3}
+  icon: {fileID: 21300000, guid: 6facc60622daf8549a712e9fd7718a09, type: 3}
   baseAmount: 10
   baseWeight: 1
   amountMultiplierPerZone: 0.1

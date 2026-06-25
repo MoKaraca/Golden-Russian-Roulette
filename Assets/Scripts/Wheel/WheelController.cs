@@ -166,18 +166,25 @@ namespace MiniGameDemo.Wheel
 
         // ------------------------------------------------------------------ Wheel Population Helpers (Issue 3)
 
+        private Dictionary<ZoneRules, List<RewardItemData>> _poolCache = new Dictionary<ZoneRules, List<RewardItemData>>();
+
         /// <summary>
         /// Returns the reward pool to draw from, filtering out any Bomb-type items.
         /// Bombs are injected separately — never drawn from the pool.
         /// </summary>
-        private static List<RewardItemData> BuildRewardPool(ZoneRules rules)
+        private List<RewardItemData> BuildRewardPool(ZoneRules rules)
         {
             if (rules.possibleRewards == null || rules.possibleRewards.Count == 0)
                 return null;
 
-            return rules.possibleRewards
+            if (_poolCache.TryGetValue(rules, out var cached)) return cached;
+
+            var pool = rules.possibleRewards
                 .Where(r => r != null && r.rewardType != RewardType.Bomb)
                 .ToList();
+            
+            _poolCache[rules] = pool;
+            return pool;
         }
 
         /// <summary>
@@ -204,13 +211,17 @@ namespace MiniGameDemo.Wheel
 
         // ------------------------------------------------------------------ Slice Visuals
 
+        private void EnsureSlicePool(int count)
+        {
+            while (_sliceVisuals.Count < count)
+            {
+                var obj = Instantiate(_sliceVisualPrefab, _rt_slices_root);
+                _sliceVisuals.Add(obj.GetComponent<WheelSliceVisual>());
+            }
+        }
+
         private void RebuildSliceVisuals(bool tierChanged)
         {
-            // Destroy existing slice visuals
-            foreach (var v in _sliceVisuals)
-                if (v != null) Destroy(v.gameObject);
-            _sliceVisuals.Clear();
-
             if (_sliceVisualPrefab == null || _rt_slices_root == null)
             {
                 Debug.LogWarning("[WheelController] sliceVisualPrefab or slicesRoot is not assigned.");
@@ -218,6 +229,8 @@ namespace MiniGameDemo.Wheel
             }
 
             int   count        = _currentSlices.Count;
+            EnsureSlicePool(count);
+
             float sliceAngleDeg = 360f / count;
 
             for (int i = 0; i < count; i++)
@@ -226,7 +239,9 @@ namespace MiniGameDemo.Wheel
                 float angleDeg = 90f - i * sliceAngleDeg;
                 float angleRad = angleDeg * Mathf.Deg2Rad;
 
-                var obj = Instantiate(_sliceVisualPrefab, _rt_slices_root);
+                var visual = _sliceVisuals[i];
+                visual.gameObject.SetActive(true);
+                var obj = visual.gameObject;
                 var rt  = obj.GetComponent<RectTransform>();
 
                 rt.sizeDelta = new Vector2(_sliceIconSize, _sliceIconSize);
@@ -240,12 +255,13 @@ namespace MiniGameDemo.Wheel
                 var rootImg = obj.GetComponent<Image>();
                 if (rootImg != null) rootImg.color = Color.clear;
 
-                var visual = obj.GetComponent<WheelSliceVisual>();
                 if (visual != null)
                     visual.Setup(_currentSlices[i].reward, _currentSlices[i].amount);
-
-                _sliceVisuals.Add(visual);
             }
+
+            // Hide any extras
+            for (int i = count; i < _sliceVisuals.Count; i++)
+                _sliceVisuals[i].gameObject.SetActive(false);
 
             // Polish: Pop-in animation
             _rt_slices_root.DOKill();
@@ -254,7 +270,7 @@ namespace MiniGameDemo.Wheel
             {
                 // Wheel tier changed (e.g. Bronze -> Silver) -> Pop the entire wheel in
                 _rt_slices_root.localScale = Vector3.zero;
-                _rt_slices_root.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
+                _rt_slices_root.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetLink(gameObject);
             }
             else
             {
@@ -262,12 +278,12 @@ namespace MiniGameDemo.Wheel
                 _rt_slices_root.localScale = Vector3.one;
                 
                 // Add a small delay between each slice popping in for a nice visual cascade
-                for (int i = 0; i < _sliceVisuals.Count; i++)
+                for (int i = 0; i < count; i++)
                 {
                     if (_sliceVisuals[i] == null) continue;
                     var rt = _sliceVisuals[i].GetComponent<RectTransform>();
                     rt.localScale = Vector3.zero;
-                    rt.DOScale(1f, 0.3f).SetEase(Ease.OutBack).SetDelay(i * 0.02f);
+                    rt.DOScale(1f, 0.3f).SetEase(Ease.OutBack).SetDelay(i * 0.02f).SetLink(_sliceVisuals[i].gameObject);
                 }
             }
         }
@@ -355,6 +371,7 @@ namespace MiniGameDemo.Wheel
             Color originalColor = img != null ? img.color : Color.white;
 
             Sequence seq = DOTween.Sequence();
+            seq.SetLink(visual.gameObject);
             seq.Append(rt.DOScale(1.5f, 0.2f).SetEase(Ease.OutBack));
 
             if (img != null)
@@ -392,6 +409,7 @@ namespace MiniGameDemo.Wheel
             Color originalColor = img != null ? img.color : Color.white;
 
             Sequence seq = DOTween.Sequence();
+            seq.SetLink(visual.gameObject);
 
             // Scale pulse
             seq.Append(rt.DOScale(1.6f, 0.1f).SetEase(Ease.OutBounce));
@@ -444,7 +462,8 @@ namespace MiniGameDemo.Wheel
 
         private static RewardItemData GetWeightedRandom(List<RewardItemData> pool)
         {
-            float total = pool.Sum(r => r.baseWeight);
+            float total = 0f;
+            foreach (var r in pool) total += r.baseWeight;
             float roll  = Random.Range(0f, total);
             float accum = 0f;
 

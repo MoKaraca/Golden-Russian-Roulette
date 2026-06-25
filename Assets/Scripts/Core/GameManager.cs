@@ -85,6 +85,16 @@ namespace MiniGameDemo.Core
             SetState(GameState.MainMenu);
         }
 
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus) PlayerProfile.PersistToDisk();
+        }
+
+        private void OnApplicationQuit()
+        {
+            PlayerProfile.PersistToDisk();
+        }
+
         // ------------------------------------------------------------------ Public API
 
         /// <summary>
