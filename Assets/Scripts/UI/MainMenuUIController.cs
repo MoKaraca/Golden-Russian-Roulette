@@ -26,9 +26,9 @@ namespace MiniGameDemo.UI
 
             // Wire button listeners in code — no Editor onClick references (per spec)
             if (_btn_play_standard != null)
-                _btn_play_standard.onClick.AddListener(() => GameManager.Instance.TryStartGame(false));
+                _btn_play_standard.onClick.AddListener(() => { SoundManager.Instance?.PlayClick(); GameManager.Instance.TryStartGame(false); });
             if (_btn_play_skip != null)
-                _btn_play_skip.onClick.AddListener(() => GameManager.Instance.TryStartGame(true));
+                _btn_play_skip.onClick.AddListener(() => { SoundManager.Instance?.PlayClick(); GameManager.Instance.TryStartGame(true); });
         }
 
         private void Start()

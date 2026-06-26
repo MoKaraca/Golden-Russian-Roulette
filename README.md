@@ -10,6 +10,7 @@ Mini_Game_Demo/
 ├── Core/
 │   ├── GameManager.cs
 │   ├── PlayerProfile.cs
+│   ├── SoundManager.cs
 │   └── Enums.cs
 │
 ├── Data/
@@ -38,6 +39,7 @@ Mini_Game_Demo/
 The main logic for the game and player data:
 - **`GameManager.cs`**: A Singleton that acts as the brain of the game. It manages the `GameState` (MainMenu, Playing, Spinning, GameOver), the current zone logic, and collected rewards. It fires events whenever the state, zone, or rewards change.
 - **`PlayerProfile.cs`**: A static class handling the player's persistent currency, saving and loading from `PlayerPrefs`.
+- **`SoundManager.cs`**: A Singleton that handles all audio. It dynamically manages background intro music (fading it automatically when the game starts) and provides centralized methods to play UI and animation sound effects.
 - **`Enums.cs`**: Defines global enums like `RewardType`, `GameState`, and `ZoneTier`.
 
 ### 2. `Data`
@@ -88,7 +90,7 @@ SampleScene
 │   ├── ui_img_curr_border
 │   └── ui_txt_currency_value
 ├── EventSystem
-├── GameManager [Component: GameManager]
+├── GameManager [Component: GameManager, SoundManager]
 └── Canvas_Gameplay [Components: GameUIManager, GameOverPanelController]
     └── ui_panel_gameplay
         ├── ui_img_background
@@ -111,7 +113,10 @@ SampleScene
 ### 1. Core Logic
 
 #### GameManager GameObject & Component
-intentionally kept entirely separate from the UI canvases. It tracks the current game state (MainMenu vs Playing vs GameOver), the player's current zone progression, and the loot they have accumulated.
+Intentionally kept entirely separate from the UI canvases. It tracks the current game state (MainMenu vs Playing vs GameOver), the player's current zone progression, and the loot they have accumulated.
+
+#### SoundManager Component
+A dedicated GameObject housing the audio logic. It handles playing SFX across the entire UI and automatically manages the fading in and out of the Main Menu intro music based on `GameManager` state changes, ensuring audio never interrupts the gameplay flow.
 
 ### 2. Main Menu Layer (Canvas)
 

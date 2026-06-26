@@ -162,6 +162,8 @@ namespace MiniGameDemo.Wheel
             var img = visual.GetComponentInChildren<Image>();
             Color originalColor = img != null ? img.color : Color.white;
 
+            SoundManager.Instance?.PlayReward();
+
             Sequence seq = DOTween.Sequence();
             seq.SetLink(visual.gameObject);
             seq.Append(rt.DOScale(1.5f, 0.2f).SetEase(Ease.OutBack));
@@ -196,6 +198,8 @@ namespace MiniGameDemo.Wheel
             var rt  = visual.GetComponent<RectTransform>();
             var img = visual.GetComponentInChildren<Image>();
             Color originalColor = img != null ? img.color : Color.white;
+
+            SoundManager.Instance?.PlayBomb();
 
             Sequence seq = DOTween.Sequence();
             seq.SetLink(visual.gameObject);

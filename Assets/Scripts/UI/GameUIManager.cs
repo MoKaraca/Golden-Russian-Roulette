@@ -155,10 +155,15 @@ namespace MiniGameDemo.UI
 
         private void OnSpinClicked()
         {
+            SoundManager.Instance?.PlayClick();
             if (_wheelController != null) _wheelController.Spin();
         }
 
-        private void OnLeaveClicked() => GameManager.Instance.LeaveGame();
+        private void OnLeaveClicked() 
+        {
+            SoundManager.Instance?.PlayClick();
+            GameManager.Instance.LeaveGame();
+        }
 
 
         private void RefreshLeaveButton()

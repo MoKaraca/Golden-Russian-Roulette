@@ -126,12 +126,14 @@ namespace MiniGameDemo.UI
 
         private void OnReviveClicked()
         {
+            SoundManager.Instance?.PlayClick();
             if (GameManager.Instance != null)
                 GameManager.Instance.TryRevive(REVIVE_COST);
         }
 
         private void OnGiveUpClicked()
         {
+            SoundManager.Instance?.PlayClick();
             if (GameManager.Instance != null)
                 GameManager.Instance.GiveUp();
         }
