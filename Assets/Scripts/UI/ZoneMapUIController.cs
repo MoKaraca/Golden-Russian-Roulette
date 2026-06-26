@@ -5,22 +5,10 @@ using MiniGameDemo.Core;
 
 namespace MiniGameDemo.UI
 {
-    /// <summary>
-    /// Displays a horizontal strip of compact zone badges anchored to the top of the screen.
-    ///
-    /// Layout rules set at runtime (so editor defaults don't matter):
-    ///   - Strip is anchored top-centre, height 60px
-    ///   - Each badge is 40x50 with spacing 4px
-    ///   - Non-current badges have transparent backgrounds
-    ///   - Current badge has a coloured highlight
-    ///   - Safe zones = silver  |  Super zones = gold  |  Standard = dim grey
-    ///
-    /// Attach to: any child of Canvas_Gameplay (it repositions itself in Awake)
-    /// </summary>
+
     [RequireComponent(typeof(RectTransform))]
     public class ZoneMapUIController : MonoBehaviour
     {
-        // ------------------------------------------------------------------ Inspector
 
         [Tooltip("Prefab with a ZoneItemUI component (Image bg + TMP number).")]
         [SerializeField] private GameObject _zoneItemPrefab;
@@ -28,20 +16,16 @@ namespace MiniGameDemo.UI
         [Tooltip("Number of zone badges visible at once.")]
         [SerializeField] private int _visibleZoneCount = 10;
 
-        // ------------------------------------------------------------------ Colours
 
         private static readonly Color COLOR_STANDARD = new Color(0.40f, 0.40f, 0.45f, 1f);
         private static readonly Color COLOR_SAFE      = new Color(0.75f, 0.80f, 0.90f, 1f);
         private static readonly Color COLOR_SUPER     = new Color(0.98f, 0.80f, 0.15f, 1f);
         private static readonly Color COLOR_CURRENT   = new Color(0.92f, 0.42f, 0.08f, 1f);
 
-        // ------------------------------------------------------------------ State
 
         private int _currentZone = 1;
         private readonly List<ZoneItemUI> _badges = new List<ZoneItemUI>();
         private HorizontalLayoutGroup _layoutGroup;
-
-        // ------------------------------------------------------------------ Lifecycle
 
         private void Awake()
         {
@@ -62,13 +46,10 @@ namespace MiniGameDemo.UI
             GameManager.Instance.OnStateChanged -= OnStateChanged;
         }
 
-        // ------------------------------------------------------------------ Layout setup
 
-        /// <summary>
         /// Only configures the HorizontalLayoutGroup settings.
         /// The strip's RectTransform position and size are controlled entirely
         /// from the Unity Inspector — nothing is overridden here.
-        /// </summary>
         private void SetupLayoutGroup()
         {
             // Get-or-add HorizontalLayoutGroup only — do NOT touch the RectTransform
@@ -85,7 +66,7 @@ namespace MiniGameDemo.UI
             _layoutGroup.padding                = new RectOffset(8, 8, 4, 4);
         }
 
-        // ------------------------------------------------------------------ Events
+
 
         private void OnZoneChanged(int newZone)
         {
@@ -102,7 +83,7 @@ namespace MiniGameDemo.UI
             }
         }
 
-        // ------------------------------------------------------------------ Strip builder
+
 
         private void RebuildStrip()
         {
@@ -110,7 +91,6 @@ namespace MiniGameDemo.UI
 
             var config = GameManager.Instance.GetConfig();
 
-            // Show a window: 1 zone before current, then up to _visibleZoneCount ahead
             int windowStart = Mathf.Max(1, _currentZone - 1);
             int windowEnd   = windowStart + _visibleZoneCount - 1;
             int needed = _visibleZoneCount;

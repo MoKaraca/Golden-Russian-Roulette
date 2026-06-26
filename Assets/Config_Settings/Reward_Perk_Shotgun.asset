@@ -15,6 +15,6 @@ MonoBehaviour:
   itemId: 
   rewardType: 3
   icon: {fileID: 21300000, guid: 217cee1ec47cd8c4a99327cc97eb11fc, type: 3}
-  baseAmount: 10
+  baseAmount: 1
   baseWeight: 1
   amountMultiplierPerZone: 0.1

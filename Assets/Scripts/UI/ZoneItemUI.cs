@@ -5,10 +5,7 @@ using DG.Tweening;
 
 namespace MiniGameDemo.UI
 {
-    /// <summary>
-    /// A single compact badge in the zone progress strip.
-    /// The background is transparent by default; only the current zone gets a coloured highlight.
-    /// </summary>
+
     public class ZoneItemUI : MonoBehaviour
     {
         [SerializeField] private Image           img_bg_value;

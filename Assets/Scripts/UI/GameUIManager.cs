@@ -7,37 +7,14 @@ using MiniGameDemo.Wheel;
 
 namespace MiniGameDemo.UI
 {
-    /// <summary>
-    /// Controls the gameplay panel: spin button, leave button, wheel generation.
-    ///
-    /// Rules:
-    ///  - Buttons are wired in Awake() — NO Unity Editor onClick references (per spec).
-    ///  - OnValidate() auto-finds references by GameObject name in children (per spec).
-    ///  - Leave button is interactable whenever wheel is idle (CanLeave == Playing).
-    ///
-    /// NOTE: GameOver panel logic (revive/give-up) has been moved to GameOverPanelController.
-    ///       This class no longer touches ui_panel_gameover, _btn_revive, or _btn_givup.
-    ///
-    /// Attach to: Canvas_Gameplay
-    /// </summary>
+    
     public class GameUIManager : MonoBehaviour
     {
-        // ------------------------------------------------------------------ Inspector
-
-        [Header("Panels")]
         [SerializeField] private GameObject _panel_gameplay;
-
-        [Header("Gameplay Buttons")]
         [SerializeField] private Button _btn_spin;
         [SerializeField] private Button _btn_leave;
-
-        [Header("Zone Display")]
         [SerializeField] private TextMeshProUGUI _txt_zone_value;
-
-        [Header("References")]
         [SerializeField] private WheelController _wheelController;
-
-        // ------------------------------------------------------------------ Lifecycle
 
         private CanvasGroup _canvasGroup;
 
@@ -53,10 +30,9 @@ namespace MiniGameDemo.UI
             ClearPanelBackgrounds();
         }
 
-        /// <summary>
+
         /// Unity Panels have a default semi-transparent white Image that creates a gray wash.
         /// We clear it here so panels are invisible containers — only their children show.
-        /// </summary>
         private void ClearPanelBackgrounds()
         {
             ClearImageBackground(_panel_gameplay);
@@ -85,14 +61,10 @@ namespace MiniGameDemo.UI
             GameManager.Instance.OnZoneChanged  -= HandleZoneChanged;
         }
 
-        // ------------------------------------------------------------------ OnValidate — auto reference wiring
+
 
 #if UNITY_EDITOR
-        /// <summary>
-        /// Automatically finds serialized fields by child GameObject name in the Editor.
-        /// This satisfies the spec requirement: "Button references should be automatically
-        /// set from OnValidate Editor codes".
-        /// </summary>
+
         private void OnValidate()
         {
             if (_btn_spin != null && _btn_leave != null && _txt_zone_value != null && _panel_gameplay != null && _wheelController != null) return;
@@ -135,15 +107,11 @@ namespace MiniGameDemo.UI
         }
 #endif
 
-        // ------------------------------------------------------------------ Button wiring (no Editor onClick)
-
         private void WireButtonListeners()
         {
             if (_btn_spin  != null) _btn_spin.onClick.AddListener(OnSpinClicked);
             if (_btn_leave != null) _btn_leave.onClick.AddListener(OnLeaveClicked);
         }
-
-        // ------------------------------------------------------------------ State event handler
 
         private void HandleStateChanged(GameState state)
         {
@@ -171,8 +139,6 @@ namespace MiniGameDemo.UI
             RefreshLeaveButton();
         }
 
-        // ------------------------------------------------------------------ Zone event handler
-
         private void HandleZoneChanged(int newZone)
         {
             if (_txt_zone_value != null)
@@ -186,7 +152,6 @@ namespace MiniGameDemo.UI
             RefreshLeaveButton();
         }
 
-        // ------------------------------------------------------------------ Button callbacks
 
         private void OnSpinClicked()
         {
@@ -195,7 +160,6 @@ namespace MiniGameDemo.UI
 
         private void OnLeaveClicked() => GameManager.Instance.LeaveGame();
 
-        // ------------------------------------------------------------------ Helpers
 
         private void RefreshLeaveButton()
         {

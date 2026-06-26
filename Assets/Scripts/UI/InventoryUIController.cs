@@ -8,45 +8,17 @@ using MiniGameDemo.Data;
 
 namespace MiniGameDemo.UI
 {
-    /// <summary>
-    /// Shows collected rewards as a compact column on the LEFT edge of the screen.
-    ///
-    /// RectTransform anchor setup (Issue 4A):
-    ///   anchorMin = (0, 0)  anchorMax = (0, 1)  pivot = (0, 1)
-    ///   This "left-stretch" anchor snaps the panel to the left side on all aspect ratios
-    ///   (20:9, 16:9, 4:3) without manual repositioning.
-    /// Each item uses the existing InventoryItemPrefab which already has:
-    ///   - Child "img_reward_icon_value" (Image)  → used for the reward icon
-    ///   - Child "txt_reward_amount_value" (TMP)  → used for the "x2" counter
-    ///
-    /// The grid lays out 11 rows per column before moving to the next column.
-    ///
-    /// The code finds these children by name, clears all white backgrounds,
-    /// sets the icon sprite, and writes the counter text.
-    ///
-    /// Attach to: ui_panel_inventory (child of Canvas_Gameplay).
-    /// </summary>
+ 
     [RequireComponent(typeof(RectTransform))]
     public class InventoryUIController : MonoBehaviour
     {
-        // ------------------------------------------------------------------ Inspector
 
-        [Tooltip("Prefab with child 'img_reward_icon_value' (Image) and " +
-                 "'txt_reward_amount_value' (TMP). Both are already in the prefab.")]
         [SerializeField] private GameObject _inventoryItemPrefab;
-
-        [Tooltip("Size (pixels) of each reward icon square. Default 48 = compact sidebar.")]
         [SerializeField] private float _itemSize = 48f;
-
-        [Tooltip("Vertical gap between items.")]
         [SerializeField] private float _itemSpacing = 6f;
-
-        // ------------------------------------------------------------------ State
 
         private readonly Dictionary<RewardItemData, InventoryItemUI> _activeItems
             = new Dictionary<RewardItemData, InventoryItemUI>();
-
-        // ------------------------------------------------------------------ Lifecycle
 
         private void Awake()
         {
@@ -67,13 +39,6 @@ namespace MiniGameDemo.UI
             GameManager.Instance.OnRewardsCleared  -= HandleRewardsCleared;
         }
 
-        // ------------------------------------------------------------------ Layout
-
-        /// <summary>
-        /// Only configures the GridLayoutGroup settings (item size, spacing).
-        /// The panel's RectTransform position and size are controlled entirely
-        /// from the Unity Inspector — nothing is overridden here.
-        /// </summary>
         private void SetupGridLayout()
         {
             // Remove any conflicting layout group types first
@@ -97,8 +62,7 @@ namespace MiniGameDemo.UI
         }
 
 
-        // ------------------------------------------------------------------ Events
-
+        // Events
         private void HandleRewardCollected(RewardItemData reward, int totalAmount)
         {
             // If we already have this reward in the inventory, just update the counter
@@ -134,21 +98,7 @@ namespace MiniGameDemo.UI
         }
     }
 
-    // ============================================================
-    // Inner helper — one inventory slot
-    // ============================================================
-
-    /// <summary>
-    /// Controls a single reward entry in the inventory sidebar.
-    ///
-    /// This component is added at runtime to each instantiated InventoryItemPrefab.
-    /// It finds the EXISTING children in the prefab:
-    ///   - "img_reward_icon_value" → Image for the reward icon
-    ///   - "txt_reward_amount_value" → TMP for the "x2" counter
-    ///
-    /// It does NOT create new children — it uses what's already in the prefab,
-    /// clears all white backgrounds, and properly populates icon + counter.
-    /// </summary>
+    
     public class InventoryItemUI : MonoBehaviour
     {
         private Image           _iconImage;
@@ -160,11 +110,11 @@ namespace MiniGameDemo.UI
             _rt = GetComponent<RectTransform>();
             _rt.sizeDelta = new Vector2(size, size);
 
-            // ── Clear the ROOT Image background (white → transparent) ─────────
+            // Clear the ROOT Image background (white -> transparent)
             var rootImg = GetComponent<Image>();
             if (rootImg != null) rootImg.color = Color.clear;
 
-            // ── Find the EXISTING icon Image child by name ────────────────────
+            // Find the EXISTING icon Image child by name
             // The prefab already has a child called "img_reward_icon_value" with an Image.
             // We use it instead of creating a duplicate.
             _iconImage = FindChildImage("img_reward_icon_value");
@@ -198,7 +148,7 @@ namespace MiniGameDemo.UI
                 }
             }
 
-            // ── Find the EXISTING TMP child by name ───────────────────────────
+            // Find the EXISTING TMP child by name 
             // The prefab already has a child called "txt_reward_amount_value" with TMP.
             // We reuse it for the counter instead of creating a duplicate.
             _amountText = FindChildTMP("txt_reward_amount_value");
@@ -231,9 +181,8 @@ namespace MiniGameDemo.UI
             UpdateAmount(amount);
         }
 
-        /// <summary>
+
         /// Updates the "x2", "x3" etc. counter text. Called when the same reward is collected again.
-        /// </summary>
         public void UpdateAmount(int amount)
         {
             if (_amountText != null)
@@ -250,8 +199,7 @@ namespace MiniGameDemo.UI
             }
         }
 
-        // ── Find helpers — searches existing prefab children by name ──────
-
+        // Find helpers — searches existing prefab children by name
         private Image FindChildImage(string childName)
         {
             foreach (Transform child in transform)

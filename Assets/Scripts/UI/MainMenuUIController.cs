@@ -6,30 +6,13 @@ using MiniGameDemo.Core;
 
 namespace MiniGameDemo.UI
 {
-    /// <summary>
-    /// Controls the Main Menu panel: shows/hides based on game state,
-    /// displays current currency and wires the two start buttons.
-    ///
-    /// Attach to: The Canvas (or any persistent root containing the main menu panel).
-    /// </summary>
+  
     public class MainMenuUIController : MonoBehaviour
     {
-        // ------------------------------------------------------------------ Inspector
-
-        [Header("Panel")]
         [SerializeField] private GameObject _panel_main_menu;
-
-        [Header("Buttons")]
-        [Tooltip("Start a game for 50 currency (btn_Play50).")]
         [SerializeField] private Button _btn_play_standard;
-
-        [Tooltip("Start a game for 500 currency (btn_Play500) — skips to zone 21.")]
         [SerializeField] private Button _btn_play_skip;
-
-        [Header("Currency Display")]
         [SerializeField] private TextMeshProUGUI _txt_currency_value;
-
-        // ------------------------------------------------------------------ Lifecycle
 
         private CanvasGroup _canvasGroup;
 
@@ -65,7 +48,6 @@ namespace MiniGameDemo.UI
             PlayerProfile.OnCurrencyChanged -= UpdateCurrencyDisplay;
         }
 
-        // ------------------------------------------------------------------ OnValidate — auto reference wiring
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -109,7 +91,6 @@ namespace MiniGameDemo.UI
         }
 #endif
 
-        // ------------------------------------------------------------------ Event handlers
 
         private void HandleStateChanged(GameState state)
         {

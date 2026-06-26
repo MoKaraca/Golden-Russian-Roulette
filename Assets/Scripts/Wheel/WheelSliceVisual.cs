@@ -5,11 +5,7 @@ using MiniGameDemo.Data;
 
 namespace MiniGameDemo.Wheel
 {
-    /// <summary>
-    /// Visual for a single slice on the spinning wheel.
-    /// The ROOT Image (background) is set to transparent by WheelController on spawn.
-    /// Only img_icon_value (child) shows the reward sprite.
-    /// </summary>
+
     public class WheelSliceVisual : MonoBehaviour
     {
         [SerializeField] private Image           img_icon_value;
@@ -21,7 +17,7 @@ namespace MiniGameDemo.Wheel
             {
                 img_icon_value.sprite           = reward.icon;
                 img_icon_value.preserveAspect   = true;
-                // No background color on the icon image — fully opaque white means the sprite renders cleanly
+                // No background color on the icon image
                 img_icon_value.color            = Color.white;
 
                 // Make icon fill its RectTransform fully

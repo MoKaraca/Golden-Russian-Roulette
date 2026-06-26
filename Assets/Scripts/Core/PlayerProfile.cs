@@ -3,22 +3,12 @@ using System;
 
 namespace MiniGameDemo.Core
 {
-    /// <summary>
-    /// Handles persisting player data such as currency.
-    /// In a real project, this might use JSON, binary formatting, or a backend service.
-    /// </summary>
+
     public static class PlayerProfile
     {
         private const string CURRENCY_KEY = "Player_Currency";
-        
         public static event Action<int> OnCurrencyChanged;
-
         private static int _cachedCurrency = -1;
-
-        public static void ResetForDemo()
-        {
-            Currency = 1000;
-        }
 
         public static int Currency
         {
@@ -33,6 +23,10 @@ namespace MiniGameDemo.Core
                 OnCurrencyChanged?.Invoke(value);
             }
         }
+
+        public static void ResetCurrency()
+        { Currency = 1000;}
+
 
         public static void PersistToDisk()
         {
